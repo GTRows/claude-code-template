@@ -1,0 +1,168 @@
+# Release workflow template.
+#
+# Rename to release.yml to activate. Tag push matching `v*.*.*` triggers a
+# gated, matrix-built, draft-first GitHub Release.
+#
+# Customization points (search for REPLACE):
+#   - Test step in the `test` job.
+#   - Build matrix in the `build` job (platforms, extensions, build commands).
+#
+# Inputs come from PROJECT.yaml indirectly:
+#   - Version derived from the tag (strips leading `v`).
+#   - Platforms must match PROJECT.yaml#release.platforms.
+#   - Artifact naming follows PROJECT.yaml#release.artifact_pattern.
+#   - Release notes extracted from the matching CHANGELOG.md section.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # REPLACE: project's test command. Release aborts if this fails.
+      - name: Run tests
+        run: |
+          echo "Replace this step with the project's test command."
+          exit 0
+
+  changelog:
+    name: Verify changelog entry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check CHANGELOG has entry for this version
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          if ! grep -qE "^## \[${VERSION}\]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no section '## [${VERSION}]'. Add it before releasing."
+            exit 1
+          fi
+
+  build:
+    name: Build ${{ matrix.platform }}
+    needs: [test, changelog]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows-x64
+            ext: exe
+          # REPLACE: enable platforms you actually support.
+          # - os: ubuntu-latest
+          #   platform: linux-x64
+          #   ext: tar.gz
+          # - os: macos-latest
+          #   platform: macos-arm64
+          #   ext: dmg
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve identity
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          NAME=$(awk '/^identity:/,/^version:/' PROJECT.yaml | awk '/^\s+name:/ {print $2; exit}')
+          echo "VERSION=$VERSION"       >> "$GITHUB_ENV"
+          echo "NAME=$NAME"             >> "$GITHUB_ENV"
+          echo "PLATFORM=${{ matrix.platform }}" >> "$GITHUB_ENV"
+          echo "EXT=${{ matrix.ext }}"  >> "$GITHUB_ENV"
+          echo "ARTIFACT=${NAME}-v${VERSION}-${{ matrix.platform }}.${{ matrix.ext }}" >> "$GITHUB_ENV"
+
+      # REPLACE: project's build command per platform. Output must land in dist/.
+      - name: Build
+        shell: bash
+        run: |
+          mkdir -p dist
+          echo "Replace this step with the project's build command for ${PLATFORM}."
+          echo "placeholder" > "dist/${ARTIFACT}"
+
+      - name: Compute checksum
+        shell: bash
+        working-directory: dist
+        run: |
+          if command -v sha256sum >/dev/null; then
+            sha256sum "${ARTIFACT}" > "SHA256SUMS.${PLATFORM}"
+          else
+            shasum -a 256 "${ARTIFACT}" > "SHA256SUMS.${PLATFORM}"
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    name: Draft GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist-all
+          merge-multiple: true
+
+      - name: Extract release notes from CHANGELOG.md
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v v="$VERSION" '
+            $0 ~ "^## \[" v "\]" { capture=1; next }
+            /^## \[/ && capture { exit }
+            capture { print }
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "::error::Empty release notes for v${VERSION}."
+            exit 1
+          fi
+
+      - name: Aggregate checksums
+        shell: bash
+        working-directory: dist-all
+        run: |
+          cat SHA256SUMS.* > SHA256SUMS 2>/dev/null || true
+          rm -f SHA256SUMS.*
+
+      - name: Determine prerelease
+        id: prerelease
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          if [[ "$VERSION" == *-* ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          prerelease: ${{ steps.prerelease.outputs.prerelease }}
+          name: ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          body_path: RELEASE_NOTES.md
+          files: |
+            dist-all/*

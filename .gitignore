@@ -1,0 +1,54 @@
+# Claude Code local settings (user-specific, not shared)
+.claude/settings.local.json
+.claude/.setup-complete
+
+# Dependencies
+node_modules/
+vendor/
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Build output
+dist/
+build/
+out/
+*.egg-info/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+credentials.json
+service-account.json
+
+# Logs
+*.log
+logs/
+
+# Test coverage
+coverage/
+.coverage
+htmlcov/
+.nyc_output/
+
+# Package manager locks (uncomment the one you do NOT use)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

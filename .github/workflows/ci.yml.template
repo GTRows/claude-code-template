@@ -1,0 +1,64 @@
+# CI workflow template.
+# Activated by `/setup` on opt-in. Copy to `ci.yml` and replace the REPLACE
+# markers with the project's actual lint/test commands.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-test:
+    name: lint + test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # REPLACE: pick target OS(es) for your project
+        os: [ubuntu-latest]
+        # os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # REPLACE: set up your runtime. Uncomment the block that matches.
+      #
+      # Node:
+      # - uses: actions/setup-node@v4
+      #   with:
+      #     node-version: "20"
+      #     cache: "npm"
+      # - run: npm ci
+      #
+      # Python:
+      # - uses: actions/setup-python@v5
+      #   with:
+      #     python-version: "3.12"
+      #     cache: "pip"
+      # - run: pip install -r requirements.txt
+      #
+      # Go:
+      # - uses: actions/setup-go@v5
+      #   with:
+      #     go-version: "1.22"
+      # - run: go mod download
+      #
+      # Rust:
+      # - uses: dtolnay/rust-toolchain@stable
+      # - uses: Swatinem/rust-cache@v2
+
+      # REPLACE: lint command for the project
+      - name: Lint
+        run: echo "REPLACE_WITH_LINT_COMMAND" && exit 1
+
+      # REPLACE: test command for the project (must match release.yml)
+      - name: Test
+        run: echo "REPLACE_WITH_TEST_COMMAND" && exit 1

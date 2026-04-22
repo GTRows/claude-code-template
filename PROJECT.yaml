@@ -1,0 +1,74 @@
+# PROJECT.yaml
+#
+# Single source of truth for this project's identity and release config.
+# Every other artifact — package manifests, installer metadata, release
+# titles, tag names, asset file names — derives from values here.
+#
+# When you change a value, run `/doctor` to catch drift in downstream files.
+# Protected by the pre_guard_release_files.py hook: edits require confirmation.
+
+identity:
+  # kebab-case, must match repo slug, binary name, and package name
+  name: PROJECT_NAME
+
+  # Human-readable form used in UI, release titles, and store listings
+  display_name: Project Display Name
+
+  # One-line elevator pitch (<= 120 chars). Same string in README, GH About, releases.
+  description: Brief one-line description of what this project does.
+
+  # Optional homepage / docs URL
+  homepage: ""
+
+  # Authoritative app icon path. All platforms derive from this.
+  # Keep the source as a high-res PNG or SVG; generate per-platform variants during build.
+  icon: assets/icon.png
+
+  # License SPDX id (MIT, Apache-2.0, GPL-3.0-only, etc.)
+  license: ""
+
+# Semver: MAJOR.MINOR.PATCH. Pre-release tags allowed (e.g. 1.2.0-rc.1).
+# This value is the single source of truth. Derived manifests must match.
+version: 0.1.0
+
+release:
+  # Platforms to build for. Matches matrix entries in .github/workflows/release.yml.
+  # Format: <os>-<arch>
+  platforms:
+    - windows-x64
+    # - linux-x64
+    # - macos-arm64
+    # - macos-x64
+
+  # Artifact naming contract. Placeholders: {name}, {version}, {platform}, {ext}
+  artifact_pattern: "{name}-v{version}-{platform}.{ext}"
+
+  # Where build scripts deposit artifacts. The release workflow collects from here.
+  artifact_dir: dist
+
+  # Checksum file produced alongside artifacts (SHA-256).
+  checksum_file: SHA256SUMS
+
+  # Pre-release suffixes honoured by the release workflow.
+  prerelease_tags: [alpha, beta, rc]
+
+  # Create GitHub Release as draft first; require manual publish approval.
+  draft_first: true
+
+  # Release is aborted if CHANGELOG.md has no matching version section.
+  require_changelog_entry: true
+
+  # Release is aborted if the test job fails.
+  require_tests_pass: true
+
+  notes:
+    # Release notes come from CHANGELOG.md; section matched by `## [x.y.z]`.
+    source: CHANGELOG.md
+    format: keep-a-changelog
+
+  assets:
+    # Extra files attached to the release beyond built artifacts.
+    # Screenshots go under assets/release/v<version>/ and are referenced in notes manually.
+    include:
+      - "{artifact_dir}/*"
+      - "{checksum_file}"
