@@ -12,7 +12,7 @@ Before doing any coding work, check for `.claude/.setup-complete`.
 
 - `/tpl` — list every template command, hook, and file in this repo.
 - `/setup` — first-time wizard (only needed once per clone).
-- `/task <subcommand>` — manage persistent TODO.md tasks. `/task` with no args prints usage.
+- `/task <subcommand>` — manage persistent TODO.md tasks. Key subcommands: `next` (one task), `run` (all Active tasks end-to-end). `/task` alone prints usage.
 - `/doctor` — read-only health check.
 - `/release <version>` — prepare a release (bump, rotate CHANGELOG, commit, tag). Never pushes.
 - Plugin commands: `/commit`, `/commit-push-pr`, `/review-pr`, `/revise-claude-md`, `/create-skill`.
@@ -25,8 +25,8 @@ Two layers — do not conflate them:
 2. **Built-in TaskCreate (ephemeral)** — this session's subtask breakdown of whatever TODO task is in flight. Use it to plan and track step-by-step work within the conversation. Do not mirror TODO.md into it.
 
 When starting work:
-- Run `/task next` (or pick a task manually) — this moves it to the top of Active.
-- Break it into `TaskCreate` subtasks.
+- One task at a time: `/task next` (moves it to top of Active, breaks into `TaskCreate` subtasks).
+- Whole queue: `/task run` (processes every Active task end-to-end: plan → implement → test → commit → `done` gate → next task). Stops on failure, keeps unfinished work in Active.
 - Step through subtasks one at a time. Mark each completed as soon as done, not in a batch.
 - When the TODO task's acceptance is met AND tests pass AND a commit exists referencing its id, call `/task done <id>`. The verification gate in `/task` enforces this.
 

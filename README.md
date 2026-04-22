@@ -43,7 +43,7 @@ Claude will clone the template, merge hooks and commands non-destructively, leav
 | Command | Purpose |
 |---------|---------|
 | `/setup` | First-time project wizard. Fills CLAUDE.md, installs plugins, scaffolds task files. |
-| `/task <sub>` | Persistent TODO.md tasks. Subcommands: `list`, `next`, `add`, `done`, `block`, `update`, `plan`. |
+| `/task <sub>` | Persistent TODO.md tasks. Subcommands: `list`, `next`, `run`, `add`, `done`, `block`, `update`, `plan`. `run` works through the whole Active queue end-to-end (plan → implement → test → commit → done). |
 | `/doctor` | Read-only health check: setup marker, plugin status, CLAUDE.md placeholders, identity drift, secrets. |
 | `/release <ver>` | Prepare a release: bump PROJECT.yaml, rotate CHANGELOG, sync manifests, commit, tag. Never pushes. |
 | `/tpl` | Discovery: list every template command, hook, and file. |

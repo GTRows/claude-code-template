@@ -15,7 +15,7 @@ Do not execute any other tool. Just print.
 | Command | Purpose |
 |---------|---------|
 | `/setup` | First-time setup wizard. Run once per fresh clone. |
-| `/task <subcommand>` | Manage persistent `TODO.md` tasks. `/task` alone prints its usage. |
+| `/task <subcommand>` | Manage persistent `TODO.md` tasks. Subcommands include `run` (work through the whole queue end-to-end). `/task` alone prints its usage. |
 | `/doctor` | Read-only health check. |
 | `/release <version>` | Prepare a release — bump, rotate CHANGELOG, commit, tag. Does NOT push. |
 | `/new-migration` | Scaffold a new DB migration. |
@@ -74,7 +74,8 @@ Mark status for each from `claude plugin list`:
 
 | Task | Command |
 |------|---------|
-| Start working | `/task next` |
+| Start working (one task) | `/task next` |
+| Work through the whole queue | `/task run` |
 | See what's left | `/task list` |
 | Finish a task | `/task done <id>` (enforces acceptance + test + commit) |
 | Diagnose issues | `/doctor` |
