@@ -76,6 +76,7 @@ Mark status for each from `claude plugin list`:
 |------|---------|
 | Start working (one task) | `/task next` |
 | Work through the whole queue | `/task run` |
+| Plan a bulk roadmap | `/task roadmap <goal>` |
 | See what's left | `/task list` |
 | Finish a task | `/task done <id>` (enforces acceptance + test + commit) |
 | Diagnose issues | `/doctor` |

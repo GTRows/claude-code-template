@@ -12,7 +12,7 @@ Before doing any coding work, check for `.claude/.setup-complete`.
 
 - `/tpl` — list every template command, hook, and file in this repo.
 - `/setup` — first-time wizard (only needed once per clone).
-- `/task <subcommand>` — manage persistent TODO.md tasks. Key subcommands: `next` (one task), `run` (all Active tasks end-to-end). `/task` alone prints usage.
+- `/task <subcommand>` — manage persistent TODO.md tasks. Key subcommands: `next` (one task), `run` (all Active tasks end-to-end), `roadmap <goal>` (generate a phased task plan). `/task` alone prints usage.
 - `/doctor` — read-only health check.
 - `/release <version>` — prepare a release (bump, rotate CHANGELOG, commit, tag). Never pushes.
 - Plugin commands: `/commit`, `/commit-push-pr`, `/review-pr`, `/revise-claude-md`, `/create-skill`.
