@@ -28,7 +28,7 @@ The user invoked `/task $ARGUMENTS`. Parse:
 ```
 /task list                  — show Active and Blocked tasks
 /task next                  — pick the next Active task and start working on it
-/task run                   — work through all Active tasks sequentially, end-to-end
+/task run [--isolated]      — work through all Active tasks sequentially, end-to-end
 /task add <title>           — append a new Active task
 /task roadmap <goal>        — generate a phased roadmap of tasks from a goal
 /task done <id>             — move task to Done after verification gate
@@ -92,15 +92,52 @@ If any Active task carries a `[pN]` phase tag, group Active output by phase in a
 
 Work through the entire Active queue sequentially, end-to-end per task. Stops only when the queue is empty OR a task cannot complete without human input.
 
+**Modes**
+
+- **normal** (default) — every task runs in the main session context. Faster startup, lower per-task overhead. Best for short queues (<= 7 tasks) or when tasks share context.
+- **isolated** (`--isolated` flag) — each task runs in its own subagent + git worktree via the `Task` tool with `subagent_type: general-purpose, isolation: "worktree"`. The subagent gets a brief, runs the task, returns a structured result (status, commit sha, summary, files-touched). The main session never sees per-task tool output, only the summary. Best for long queues (8+ tasks), token-heavy work, or independent tasks.
+
 **Preflight (before starting the loop)**
 
 1. Read `TODO.md` Active section. If empty, report `No Active tasks.` and stop.
 2. `git status --porcelain` must be empty. If not, stop and ask the user to commit or stash.
 3. Print the Active queue (ids + titles, in order).
-4. Ask exactly once: `Run <N> Active tasks sequentially? This will edit code, run tests, and create commits. (yes/no)`
-5. On anything other than `yes`, stop.
+4. Pick a default mode: `isolated` if the queue has 8 or more tasks, otherwise `normal`. If `--isolated` is in `$ARGUMENTS`, force `isolated`. If `--normal` is in `$ARGUMENTS`, force `normal`.
+5. Ask exactly once: `Run <N> Active tasks sequentially in <mode> mode? (yes / no / switch)`. `switch` toggles mode and re-asks.
+6. On anything other than `yes`, stop.
 
-**Per-task procedure**
+**Isolated dispatch (per task, isolated mode only)**
+
+For each task, instead of executing inline, call the `Task` tool with:
+
+```
+subagent_type: "general-purpose"
+isolation: "worktree"
+description: "task t-<id>"
+prompt: |
+  You are executing a single task from the parent project's TODO.md.
+
+  Task id: t-<id>
+  Title: <title>
+  Acceptance: <acceptance>
+  Phase: <pN or none>
+
+  Project conventions: <CLAUDE.md path>. Read it once.
+
+  Do exactly this:
+  1. Implement the change to satisfy the acceptance.
+  2. Add or update the unit test that covers the change.
+  3. Run lint and the test suite. If anything fails, attempt one focused fix.
+  4. Stage only the files you touched and commit with `<type>(<scope>): <title> (t-<id>)`.
+  5. Return a JSON line, ONLY this — no prose:
+     {"taskId": "t-<id>", "status": "ok|failed", "commit": "<sha>", "summary": "<one line>", "files": ["..."], "reason": "<failure reason if any>"}
+
+  Do NOT push. Do NOT modify TODO.md. Do NOT touch unrelated files.
+```
+
+The main session reads the JSON line, applies the `done` gate, updates `TODO.md`, and continues. If the subagent's worktree was committed, the main session merges that commit onto its branch (fast-forward when possible).
+
+**Per-task procedure (normal mode)**
 
 Process order across the Active queue:
 - Untagged / `[p0]` tasks first.
@@ -142,6 +179,12 @@ Print a summary:
 - Tasks that caused the abort, if any
 
 Do NOT push. The user pushes when satisfied.
+
+**Token hygiene (applies to both modes)**
+
+- **Read-once**: any file you read once in the current task is in your context. Do NOT re-read it unless you are also the one who modified it AND need to see the latest state.
+- **Trim tool output**: prefer `Grep` and targeted `Read` (with `offset`/`limit`) over wholesale file dumps. After an `Edit`, do not re-read the whole file to "verify" — trust the edit return.
+- **Delegate research to a subagent**: for "where is X used", "find all callers of Y", or any multi-file scan, spawn an `Explore` subagent (`Task` tool, `subagent_type: "Explore"`). Its tool calls stay in its context; you only get the answer.
 
 **Non-goals**
 
