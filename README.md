@@ -100,6 +100,7 @@ Installed globally (user scope) by `/setup`:
 | `claude-md-management` | `/revise-claude-md` + CLAUDE.md improver skill |
 | `skill-creator` | Author and tune custom skills |
 | `security-guidance` | Session-scoped security reminders |
+| `oh-my-claudecode` | Autopilot, ralph, ultrawork, deep-dive, plan, team, and more advanced agents (custom marketplace `omc`) |
 | `frontend-design` | Distinctive, production-grade frontend code (only installed if project has a UI) |
 
 Plugins live in user scope, so one install covers every project.

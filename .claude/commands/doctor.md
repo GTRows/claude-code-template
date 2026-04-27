@@ -56,15 +56,16 @@ Report each mismatch as: `drift: <path> has <value>, expected <PROJECT.yaml valu
 Run `claude plugin list`. Cross-check against the recommended set:
 
 **Certain** — should always be installed:
-- `code-simplifier`
-- `commit-commands`
-- `pr-review-toolkit`
-- `claude-md-management`
-- `skill-creator`
-- `security-guidance`
+- `code-simplifier@claude-plugins-official`
+- `commit-commands@claude-plugins-official`
+- `pr-review-toolkit@claude-plugins-official`
+- `claude-md-management@claude-plugins-official`
+- `skill-creator@claude-plugins-official`
+- `security-guidance@claude-plugins-official`
+- `oh-my-claudecode@omc` — also verify the `omc` marketplace exists via `claude plugin marketplace list`
 
 **Conditional** — only if the project has a UI:
-- `frontend-design`
+- `frontend-design@claude-code-plugins`
 
 Report any missing certain-set plugins.
 

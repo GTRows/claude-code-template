@@ -73,6 +73,7 @@ Mark status for each from `claude plugin list`:
 - `claude-md-management@claude-plugins-official`
 - `skill-creator@claude-plugins-official`
 - `security-guidance@claude-plugins-official`
+- `oh-my-claudecode@omc` (autopilot / ralph / ultrawork / deep-dive / plan agents — register marketplace first: `claude plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode`)
 - `frontend-design@claude-code-plugins` (only if project has a UI)
 
 ## Quick recipes

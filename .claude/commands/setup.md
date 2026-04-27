@@ -156,17 +156,26 @@ This rule overrides any default. Do not switch languages mid-project unless the 
 
 Tell the user which plugins you will install and why. These are installed globally (user scope) and become available in every project:
 
-| Plugin | Purpose |
-|--------|---------|
-| `code-simplifier@claude-plugins-official` | Reviews changed code for redundancy |
-| `commit-commands@claude-plugins-official` | `/commit`, `/commit-push-pr` |
-| `pr-review-toolkit@claude-plugins-official` | Multi-aspect PR review |
-| `claude-md-management@claude-plugins-official` | `/revise-claude-md` + improver skill |
-| `skill-creator@claude-plugins-official` | Author new skills |
-| `security-guidance@claude-plugins-official` | Session-scoped security reminders |
-| `frontend-design@claude-code-plugins` | Only if the project has a UI |
+| Plugin | Marketplace | Purpose |
+|--------|-------------|---------|
+| `code-simplifier` | `claude-plugins-official` | Reviews changed code for redundancy |
+| `commit-commands` | `claude-plugins-official` | `/commit`, `/commit-push-pr` |
+| `pr-review-toolkit` | `claude-plugins-official` | Multi-aspect PR review |
+| `claude-md-management` | `claude-plugins-official` | `/revise-claude-md` + improver skill |
+| `skill-creator` | `claude-plugins-official` | Author new skills |
+| `security-guidance` | `claude-plugins-official` | Session-scoped security reminders |
+| `oh-my-claudecode` | `omc` | Autopilot, ralph, ultrawork, deep-dive, plan, and more advanced agents |
+| `frontend-design` | `claude-code-plugins` | Only if the project has a UI |
 
-Run `claude plugin list` first. Skip anything already installed. Install the rest:
+**Step 8a — register custom marketplaces first.** Run `claude plugin marketplace list`; if `omc` is missing, add it:
+
+```bash
+claude plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode
+```
+
+The other two marketplaces (`claude-plugins-official`, `claude-code-plugins`) ship with Claude Code; you do not need to add them.
+
+**Step 8b — install plugins.** Run `claude plugin list` first. Skip anything already installed. Install the rest:
 
 ```bash
 claude plugin install <name>@<marketplace>

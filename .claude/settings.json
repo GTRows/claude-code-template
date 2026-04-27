@@ -89,5 +89,8 @@
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "oh-my-claudecode@omc": true
   }
 }
