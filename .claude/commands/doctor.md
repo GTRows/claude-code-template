@@ -104,7 +104,18 @@ Report only file paths and line numbers — **never print the secret itself**.
 ## 8. Template version
 
 - If `.claude/VERSION` exists, print its content.
-- You do not know the canonical latest — just report what is in the file.
+- Run `gh release list --repo GTRows/claude-code-template --limit 1 --json tagName --jq '.[0].tagName'` (or `git ls-remote --tags` fallback) to fetch the upstream latest tag.
+- If the upstream tag is newer, print: `template update available: vX → vY (run /update)`.
+- If `gh` and network are unavailable, print: `cannot reach upstream — skipped version drift check`.
+
+## 9. Template manifest drift
+
+- If `.claude/.template-manifest.json` exists, run:
+  ```bash
+  python .claude/scripts/manifest.py --check
+  ```
+- Report the list of paths the user has modified relative to the recorded manifest. This is informational only — modifications are normal. Useful before running `/update` so the user knows which files will hit the conflict path.
+- If the manifest is missing, suggest running `/update` (which will regenerate it) or `python .claude/scripts/manifest.py --write` to seed it.
 
 ---
 

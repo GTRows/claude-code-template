@@ -114,7 +114,45 @@ Append under `## Git and Commits` in `CLAUDE.md`:
 
 ---
 
-## 7. Install recommended plugins
+## 7. Conversation language and project i18n
+
+Two separate questions — ask them together, in one message:
+
+**a. Conversation language**
+
+> What language should I speak with you in this project? (English / Türkçe / Deutsch / ... — pick one)
+
+Whatever the user picks, append a binding rule to `CLAUDE.md` under a new `## Communication` section:
+
+```
+- Speak with the user in <Language>. All conversational responses,
+  prompts, summaries, and questions must be in this language.
+- Code, identifiers, comments, commit messages, and file contents
+  must always be in English regardless of conversation language.
+- Slash command output formatting (tables, status lines) stays English.
+```
+
+This rule overrides any default. Do not switch languages mid-project unless the user re-runs `/setup`.
+
+**b. Project localization (i18n)**
+
+> Will this project ship to end users in multiple languages? (yes / no / later)
+
+- **no** → no further action.
+- **later** → open a TODO task `setup-i18n` with acceptance: "i18n strategy decided".
+- **yes** → ask one follow-up: `Which UI languages will you support? (comma-separated, e.g. en, tr, de)`. Then append to `CLAUDE.md` under `## Localization`:
+  ```
+  - Supported UI languages: <list>.
+  - Default / fallback: <first in list>.
+  - Translation source format: TBD (gettext, JSON, ICU, ...) — set when picking the i18n library.
+  - User-facing strings must NOT be hard-coded. Wrap them in the
+    project's translation function.
+  ```
+  Open a TODO task `pick-i18n-lib` with acceptance: "i18n library installed, default + at least one non-default locale rendering".
+
+---
+
+## 8. Install recommended plugins
 
 Tell the user which plugins you will install and why. These are installed globally (user scope) and become available in every project:
 
@@ -138,7 +176,7 @@ Users running Claude Code with `--dangerously-skip-permissions` get silent insta
 
 ---
 
-## 8. Create task files
+## 9. Create task files
 
 - Ensure `TODO.md` exists at repo root. Copy the template skeleton if missing (Active / Blocked / Done sections).
 - Ensure `DEFERRED.md` exists at repo root. Copy the template skeleton if missing.
@@ -154,7 +192,7 @@ For every `CLAUDE.md` section you could not fill in step 4, append a task to `TO
 
 ---
 
-## 9. CI scaffolding (opt-in)
+## 10. CI scaffolding (opt-in)
 
 Ask:
 
@@ -169,7 +207,7 @@ Ask:
 
 ---
 
-## 10. Release scaffolding (opt-in)
+## 11. Release scaffolding (opt-in)
 
 Ask:
 
@@ -187,14 +225,42 @@ Ask:
 
 ---
 
-## 11. Hooks sanity check
+## 12. Optional scaffolding (opt-in, batched)
+
+Ask the user once, listing every option:
+
+> Want any of these scaffolding files? Reply with comma-separated numbers, `all`, or `none`.
+>
+>   1. `LICENSE` (MIT default — ask the year and copyright holder)
+>   2. `SECURITY.md` (vulnerability disclosure policy)
+>   3. `CONTRIBUTING.md` (PR / commit / branching guidance from this CLAUDE.md)
+>   4. `.github/CODEOWNERS` (auto-request reviewers)
+>   5. `.github/dependabot.yml` (weekly dependency updates)
+>   6. `.pre-commit-config.yaml` (pre-commit framework — runs lint/format on staged files)
+>   7. `.env.example` (env-var template; only meaningful if the project uses dotenv)
+
+For each picked option:
+
+- `LICENSE` → write the MIT text with `<year>` / `<owner>` filled in. Update `PROJECT.yaml#identity.license` to `MIT`.
+- `SECURITY.md` → minimal disclosure policy (email contact, expected response time, supported versions table — fill from `PROJECT.yaml`).
+- `CONTRIBUTING.md` → derive from this CLAUDE.md's `Git and Commits`, `Code Standards`, `File Organization` sections.
+- `.github/CODEOWNERS` → ask for the user's GitHub handle, default `* @<handle>`.
+- `.github/dependabot.yml` → infer ecosystem from detection in step 2 (npm, pip, cargo, gomod, ...).
+- `.pre-commit-config.yaml` → infer hooks from stack (ruff for Python, prettier for JS, etc.); leave a comment block of suggested hooks the user can opt into.
+- `.env.example` → only if the project already imports `dotenv` / uses `os.environ.get` patterns. Scan top-level source for variable names and stub them with empty values.
+
+For files the user did not pick, do nothing — do not open TODOs for them.
+
+---
+
+## 13. Hooks sanity check
 
 - Read `PROTECTED_EXACT` in `.claude/hooks/pre_guard_release_files.py`. If the project has lock or manifest files not yet listed (`Cargo.lock`, `yarn.lock`, `pnpm-lock.yaml`, `Pipfile.lock`, `poetry.lock`, `go.sum`, ...), suggest additions and wait for user confirmation. Do NOT edit the hook without approval.
 - If the project uses Windows-specific native APIs (detected `winreg` / `ctypes` imports, `SystemParametersInfo`), offer to register `.claude/hooks/optional/pre_warn_win32_danger.py` in `.claude/settings.json`.
 
 ---
 
-## 12. Write the setup marker
+## 14. Write the setup marker
 
 Create `.claude/.setup-complete` with exactly this content (no trailing whitespace):
 
@@ -207,9 +273,17 @@ type: <fork|primary>
 
 Ensure `.claude/.setup-complete` is listed in `.gitignore` — the marker is per-clone, not per-repo.
 
+Then write the template manifest so `/update` can later detect which files the user has modified:
+
+```bash
+python .claude/scripts/manifest.py --write
+```
+
+Add `.claude/.template-manifest.json` to git so it ships with the project.
+
 ---
 
-## 13. Summary
+## 15. Summary
 
 Print a short summary:
 

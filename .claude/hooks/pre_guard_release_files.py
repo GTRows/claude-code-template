@@ -58,6 +58,7 @@ EXEMPT_DIRS = (
     ".claude/skills",
     ".claude/hooks",
     ".claude/agents",
+    ".claude/scripts",
 )
 # -----------------------------------
 
