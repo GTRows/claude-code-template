@@ -1,6 +1,7 @@
 # CI workflow template.
 # Activated by `/setup` on opt-in. Copy to `ci.yml` and replace the REPLACE
-# markers with the project's actual lint/test commands.
+# markers with the project's actual lint/test commands. The hook tests block
+# below is always-on for any project that adopts this template.
 
 name: CI
 
@@ -15,6 +16,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  hook-tests:
+    name: template hook tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest
+      - run: python -m pytest .claude/hooks/tests -q
+      - run: python .claude/scripts/manifest.py --check
+
   lint-test:
     name: lint + test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
