@@ -42,9 +42,11 @@ Claude will clone the template, merge hooks and commands non-destructively, leav
 
 | Command | Purpose |
 |---------|---------|
-| `/setup` | First-time project wizard. Fills CLAUDE.md, installs plugins, scaffolds task files. |
-| `/task <sub>` | Persistent TODO.md tasks. Subcommands: `list`, `next`, `run`, `add`, `done`, `block`, `update`, `plan`, `roadmap`. `run` works through the whole Active queue end-to-end; `roadmap <goal>` generates a phased plan, asks you which proposals to drop, then writes the rest to TODO.md. |
-| `/doctor` | Read-only health check: setup marker, plugin status, CLAUDE.md placeholders, identity drift, secrets. |
+| `/menu` | Interactive entry point — pick what to do, Claude routes to the right command. |
+| `/setup` | First-time project wizard. Asks conversation language + i18n, fills CLAUDE.md, installs plugins, scaffolds task files, writes the template manifest. |
+| `/update` | Pull template updates from upstream and merge non-destructively (uses sha-keyed manifest to detect user modifications). |
+| `/task <sub>` | Persistent TODO.md tasks. Subcommands: `list`, `next`, `run [--isolated]`, `add`, `done`, `block`, `update`, `plan`, `roadmap`. `run --isolated` dispatches each task to a worktree-isolated subagent; `roadmap <goal>` generates a phased plan with negative-filter approval. |
+| `/doctor` | Read-only health check: setup marker, plugin status, CLAUDE.md placeholders, identity drift, secrets, template version drift, manifest drift. |
 | `/release <ver>` | Prepare a release: bump PROJECT.yaml, rotate CHANGELOG, sync manifests, commit, tag. Never pushes. |
 | `/tpl` | Discovery: list every template command, hook, and file. |
 | `/new-migration` | Scaffold a DB migration following detected conventions. |

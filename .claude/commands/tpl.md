@@ -14,7 +14,9 @@ Do not execute any other tool. Just print.
 
 | Command | Purpose |
 |---------|---------|
+| `/menu` | Interactive entry point — pick what to do, Claude routes to the right command. |
 | `/setup` | First-time setup wizard. Run once per fresh clone. |
+| `/update` | Pull template updates from upstream and merge non-destructively. |
 | `/task <subcommand>` | Manage persistent `TODO.md` tasks. Subcommands include `run` (work through the whole queue end-to-end). `/task` alone prints its usage. |
 | `/doctor` | Read-only health check. |
 | `/release <version>` | Prepare a release — bump, rotate CHANGELOG, commit, tag. Does NOT push. |
@@ -55,6 +57,9 @@ Do not execute any other tool. Just print.
 | `.github/workflows/release.yml` | Tag-triggered release automation (activated from `release.yml.template`) |
 | `.github/workflows/ci.yml` | Lint + test on push/PR (activated from `ci.yml.template`) |
 | `.claude/.setup-complete` | Setup marker written by `/setup`. Gitignored. |
+| `.claude/.template-manifest.json` | Sha-256 manifest of every template-owned file at install time. Used by `/update` and `/doctor` to detect user modifications. |
+| `.claude/scripts/manifest.py` | Helper that builds the manifest. Supports `--write` and `--check`. |
+| `.claude/hooks/tests/` | Pytest suite for the guard hooks and manifest script. |
 | `.claude/VERSION` | Template version pin |
 | `.claude/TIPS.md` | Long-form reference |
 
