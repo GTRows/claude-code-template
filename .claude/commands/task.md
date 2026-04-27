@@ -122,18 +122,30 @@ prompt: |
   Acceptance: <acceptance>
   Phase: <pN or none>
 
-  Project conventions: <CLAUDE.md path>. Read it once.
+  Project conventions live in `${CLAUDE_PROJECT_DIR}/CLAUDE.md` (worktree
+  mirrors the project root, so the path is just `CLAUDE.md` relative to the
+  current working directory). Read it once at the start. Also read
+  `PROJECT.yaml` if you need version, name, or release context.
 
   Do exactly this:
   1. Implement the change to satisfy the acceptance.
   2. Add or update the unit test that covers the change.
-  3. Run lint and the test suite. If anything fails, attempt one focused fix.
-  4. Stage only the files you touched and commit with `<type>(<scope>): <title> (t-<id>)`.
-  5. Return a JSON line, ONLY this — no prose:
-     {"taskId": "t-<id>", "status": "ok|failed", "commit": "<sha>", "summary": "<one line>", "files": ["..."], "reason": "<failure reason if any>"}
+  3. Run lint and the test suite as defined in CLAUDE.md "Development
+     Commands". If anything fails, attempt one focused fix.
+  4. Stage only the files you touched and commit with
+     `<type>(<scope>): <title> (t-<id>)`.
+  5. As your FINAL message, return a single JSON line and nothing else:
+     {"taskId": "t-<id>", "status": "ok|failed", "commit": "<sha or null>", "summary": "<one line>", "files": ["..."], "reason": "<failure reason if any, else null>"}
 
-  Do NOT push. Do NOT modify TODO.md. Do NOT touch unrelated files.
+  Do NOT push. Do NOT modify TODO.md. Do NOT touch files unrelated to
+  the acceptance. Do NOT run `git add -A`. Do NOT install new
+  dependencies without permission.
 ```
+
+After the subagent returns, the main session parses the JSON line. If the
+JSON cannot be parsed (the subagent emitted prose instead), treat the task
+as `failed` with reason "subagent did not return structured result" and
+abort the run.
 
 The main session reads the JSON line, applies the `done` gate, updates `TODO.md`, and continues. If the subagent's worktree was committed, the main session merges that commit onto its branch (fast-forward when possible).
 

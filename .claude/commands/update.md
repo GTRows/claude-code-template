@@ -45,7 +45,19 @@ The project keeps a manifest at `.claude/.template-manifest.json`. Format:
 }
 ```
 
-If the manifest is missing, generate one against the **current local state** so the user is treated as "no template-side changes since install" — they will get prompted on every file in the next step. Warn the user this happens once.
+**If the manifest is missing** (project predates the manifest system, or `/setup` was run on an older template version):
+
+1. Tell the user explicitly:
+   > No `.claude/.template-manifest.json` found. I will seed one from the current local files. Any file you have already modified will be treated as "untouched", so on the next conflict step I will not be able to detect those edits — you will see them as auto-update candidates instead. This is a one-time bootstrap.
+
+2. Run:
+   ```bash
+   python .claude/scripts/manifest.py --write
+   ```
+
+3. Then continue. From this point forward, `/update` works precisely.
+
+**If the manifest is present**, continue without asking.
 
 ## Step 3 — Fetch upstream
 

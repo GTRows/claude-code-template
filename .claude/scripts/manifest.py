@@ -16,7 +16,9 @@ Without flags, prints the computed manifest to stdout (JSON).
 import argparse
 import hashlib
 import json
+import os
 import sys
+import tempfile
 from pathlib import Path
 
 # Paths under PROJECT_ROOT that the template owns. Glob-aware via Path.rglob.
@@ -93,8 +95,28 @@ def load_existing(root: Path) -> dict | None:
 
 
 def write_manifest(root: Path, manifest: dict) -> Path:
+    """Write the manifest atomically.
+
+    Writes to a sibling temp file in the same directory and renames it onto
+    the destination via os.replace, which is atomic on POSIX and Windows.
+    Prevents a partial file or a write/write race between concurrent
+    /setup and /update sessions from leaving a corrupted manifest.
+    """
     mfile = root / ".claude" / ".template-manifest.json"
-    mfile.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    mfile.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(
+        prefix=".template-manifest.", suffix=".json.tmp", dir=mfile.parent
+    )
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=2, sort_keys=True)
+            f.write("\n")
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp_path, mfile)
+    except Exception:
+        Path(tmp_path).unlink(missing_ok=True)
+        raise
     return mfile
 
 

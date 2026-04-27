@@ -22,13 +22,25 @@ version   semver: MAJOR.MINOR.PATCH[-prerelease]
 | 1 | `git status --porcelain` is empty | Uncommitted changes exist. |
 | 2 | Current branch is `main` (or project's release branch) | On some other branch. |
 | 3 | `PROJECT.yaml` exists at repo root | Missing. |
-| 4 | `CHANGELOG.md` has `## [Unreleased]` with at least one non-empty bullet | Missing or empty. |
+| 4 | `CHANGELOG.md` has `## [Unreleased]` with at least one non-empty bullet | Missing or empty. See remediation below. |
 | 5 | `$ARGUMENTS` matches semver regex `^\d+\.\d+\.\d+(-[A-Za-z][A-Za-z0-9.]*)?$` | Invalid. |
 | 6 | Tag `v<version>` does not exist (`git rev-parse v<version>` fails) | Tag already exists. |
 | 7 | `PROJECT.yaml#version` is less than `$ARGUMENTS` (split-by-dot compare) | Version not going forward. |
 | 8 | If pre-release, its tag (`alpha`, `beta`, `rc`, ...) is in `PROJECT.yaml#release.prerelease_tags` | Tag not allowed. |
 
 On any failure: stop and report which check failed. Do not touch the repo.
+
+### Remediation hints
+
+If a check fails, surface the specific fix instead of just the abort:
+
+- **Check 4 (CHANGELOG missing or empty)**:
+  - File missing → `/setup` was likely run with release scaffolding off. Tell the user: "CHANGELOG.md is missing. Either re-run `/setup` and pick `yes` for release scaffolding, or copy the template skeleton manually from the upstream repo's CHANGELOG.md."
+  - File present but `## [Unreleased]` is empty or has only empty subsections → tell the user: "Add at least one bullet under `## [Unreleased]` in CHANGELOG.md before running `/release` again. Bullets describe what changed since the last release."
+  - File present but `## [Unreleased]` heading is missing → tell the user: "Add a `## [Unreleased]` section at the top of CHANGELOG.md (above the most recent version section) with the change bullets."
+- **Check 1 (uncommitted changes)**: list the offending files; suggest `git stash` or commit.
+- **Check 7 (version not going forward)**: print current and target; suggest the next valid bump.
+- **Check 8 (prerelease tag not allowed)**: print allowed tags from `PROJECT.yaml#release.prerelease_tags`.
 
 ---
 

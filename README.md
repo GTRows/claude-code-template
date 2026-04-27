@@ -28,11 +28,15 @@ claude
 
 ### B. Implement into an existing project
 
-Open Claude Code inside your existing repo and say:
+Two options:
 
-> Implement https://github.com/GTRows/claude-code-template into this project. Follow IMPLEMENT.md from the template repo.
+1. **Recommended — `/onboard`**: clone the template into a temp dir, copy in the slash commands and hooks (or have someone copy `.claude/commands/onboard.md` over once), then run:
+   ```
+   /onboard
+   ```
+   The runbook walks you through every file decision interactively (apply / skip / view-diff). Your `README.md`, `package.json`, and existing configs are never touched. See [.claude/commands/onboard.md](./.claude/commands/onboard.md).
 
-Claude will clone the template, merge hooks and commands non-destructively, leave your `README.md` and existing configs untouched, and run `/setup` when done. See [IMPLEMENT.md](./IMPLEMENT.md) for the exact runbook.
+2. **Manual** — read [IMPLEMENT.md](./IMPLEMENT.md) and apply the file-by-file plan yourself, or paste the runbook into Claude and ask it to execute step by step.
 
 ---
 

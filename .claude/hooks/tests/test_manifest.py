@@ -74,3 +74,22 @@ def test_load_existing_returns_none_when_missing(tmp_path: Path):
 
 def test_read_version_defaults_when_missing(tmp_path: Path):
     assert manifest.read_version(tmp_path) == "0.0.0"
+
+
+def test_write_manifest_is_atomic_and_leaves_no_temp(tmp_path: Path):
+    (tmp_path / ".claude").mkdir()
+    payload = {"version": "1.0.0", "files": {"a": "b"}}
+    written = manifest.write_manifest(tmp_path, payload)
+    assert written.exists()
+    assert json.loads(written.read_text(encoding="utf-8")) == payload
+    leftover = list((tmp_path / ".claude").glob(".template-manifest.*.json.tmp"))
+    assert leftover == []
+
+
+def test_write_manifest_overwrites_existing(tmp_path: Path):
+    (tmp_path / ".claude").mkdir()
+    target = tmp_path / ".claude" / ".template-manifest.json"
+    target.write_text('{"old": true}', encoding="utf-8")
+    new_payload = {"version": "2.0.0", "files": {}}
+    manifest.write_manifest(tmp_path, new_payload)
+    assert json.loads(target.read_text(encoding="utf-8")) == new_payload

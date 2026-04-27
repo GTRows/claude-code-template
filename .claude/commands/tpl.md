@@ -16,6 +16,7 @@ Do not execute any other tool. Just print.
 |---------|---------|
 | `/menu` | Interactive entry point — pick what to do, Claude routes to the right command. |
 | `/setup` | First-time setup wizard. Run once per fresh clone. |
+| `/onboard` | Interactive runbook to merge the template into an existing project (driver for IMPLEMENT.md). |
 | `/update` | Pull template updates from upstream and merge non-destructively. |
 | `/task <subcommand>` | Manage persistent `TODO.md` tasks. Subcommands include `run` (work through the whole queue end-to-end). `/task` alone prints its usage. |
 | `/doctor` | Read-only health check. |
