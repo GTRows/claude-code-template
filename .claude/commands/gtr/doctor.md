@@ -124,6 +124,34 @@ Report only file paths and line numbers — **never print the secret itself**.
 - Report the list of paths the user has modified relative to the recorded manifest. This is informational only — modifications are normal. Useful before running `/gtr:update` so the user knows which files will hit the conflict path.
 - If the manifest is missing, suggest running `/gtr:update` (which will regenerate it) or `python .claude/scripts/manifest.py --write` to seed it.
 
+## 10. Predictive health (informational, never blocking)
+
+These are heuristics that surface problems before they bite. Local data only — no network.
+
+- **CHANGELOG churn**: count bullet lines under `## [Unreleased]` in `CHANGELOG.md`. If `> 30`, flag: "Unreleased section is large — consider cutting a release."
+- **Release recency**: read the most recent `## [<version>] - <YYYY-MM-DD>` line. If older than 90 days AND `## [Unreleased]` has at least one bullet, flag: "Last release was <N> days ago and there is unreleased work."
+- **Plan staleness**: if `.planning/STATE.md` reports an in-flight plan whose timestamp is older than 14 days, flag: "Phase <N> appears stalled."
+- **Manifest drift volume**: if `python .claude/scripts/manifest.py --check` reports more than 5 modified files, flag: "Significant manifest drift — `/gtr:update` will require many conflict decisions."
+- **Migration backlog**: run `python .claude/scripts/migrations.py --check` against the upstream version (already known from section 8). If migrations are pending, flag: "Schema migrations pending."
+
+Each flag is one short line. Do not score or rank — let the user decide.
+
+## 11. Token usage summary (last 7 days)
+
+If `.claude/usage-log.jsonl` exists, read the last 7 days of records and print:
+
+```
+total tokens (last 7 days): <N>
+sessions:                   <count>
+avg session:                <total / count>
+top model:                  <most-used model name>
+heaviest session:           <ts>  <total_tokens>  duration <s>
+```
+
+If the heaviest single session is more than 5x the average, flag: "One session burned <N>x the average — review what command was running then."
+
+If the file does not exist, print: `no usage log yet (the SessionEnd hook records each session's tokens)`.
+
 ---
 
 ## Summary

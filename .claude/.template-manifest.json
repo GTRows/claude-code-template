@@ -1,13 +1,14 @@
 {
   "files": {
     ".claude/TIPS.md": "ba437c8485a982a940d0fe332f5d342cf016b33dbff83aedf98e64e85f535f69",
-    ".claude/VERSION": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03",
-    ".claude/commands/gtr/doctor.md": "2668ef4fb8f63f03b619b92036ae02159465bdc5ad36d53296b6ab588256a09b",
+    ".claude/VERSION": "c58a749f70f5e1ba5394ebcdbfcfa02fa938c4a173d8e41e6c476a7c8b2acddd",
+    ".claude/commands/gtr/doctor.md": "d0fe843b092745eefce782a313d56c8a18bf556c3831c43e85b3d94461c8b9e2",
+    ".claude/commands/gtr/help.md": "939ba2dd2f4ef597b5abcf6b538daf56c559fd4f455caaff97de58505e233e53",
     ".claude/commands/gtr/menu.md": "ae318e6039de4e3509371104e2f931c2f3fc2301347caeae45787f3666474a97",
     ".claude/commands/gtr/new-migration.md": "83ea52e561a7633c95b997cb4b3884a958a386d310b18404b0e121d064687250",
     ".claude/commands/gtr/onboard.md": "490d7ffffa744e9eec48de897590b5409cc609329bcc283c0f8448c13723c204",
     ".claude/commands/gtr/release.md": "d787739817a55cdb9e5d2d2dbc5f117f9b230a1ab11c92953d1ab067ec624492",
-    ".claude/commands/gtr/setup.md": "af7aff5dabe9e039111968713a61b9be660099a548ba5cb6e59c322e2102255a",
+    ".claude/commands/gtr/setup.md": "133bd597d0a99962eb7fd6bd1dfe355e77c1d343a285ebc81aeed2f3e7cbe948",
     ".claude/commands/gtr/update.md": "ce90cc214cb6cfded255f7a4827852602bddde082bda673d9af017ec64c80850",
     ".claude/hooks/optional/pre_warn_win32_danger.py": "80b21144d38599cacf8b9b1fd9d41eae952b0ea60300baa37aac8a05feafd62d",
     ".claude/hooks/post_validate_syntax.py": "b1b9edf4b5cb9c051621e2f0d8404ba24e8a9d66b57ebc86c860cb7b17ef9e62",
@@ -16,19 +17,20 @@
     ".claude/hooks/pre_guard_release_files.py": "bc0f48ecc7c7e9272fa7077a1dccc2c24ab5f217d4768f7ed5691ca850ddc021",
     ".claude/hooks/pre_guard_security.py": "b245872e5392bf7d8a6357c3cf4d990b8ff2f09435eda63e40fe7be16cdcef45",
     ".claude/hooks/session_check_setup.py": "9fc370eb91ddad0958b9569a3c8e63e1c9f3a15ada415dbbc7c7ffe2a27c50a3",
+    ".claude/hooks/session_log_usage.py": "98b98d2ee45b00eff7142d38dcb8f36d8700d794d3018301b261b54603ca6bcf",
     ".claude/scripts/manifest.py": "011a42ec1b27e0f897c9891fb872bb84a5462ea950db3a1cf5bfb08ea0e00a5e",
     ".claude/scripts/migrations.py": "d6ffc907da20eaf40b53a5de7636d0039b86853693f43941c87bdbe213c80895",
-    ".claude/settings.json": "80f6b6ca70b4920145128dbdbd7aafc892be662d94abd1982a74d442249688d5",
+    ".claude/settings.json": "64e815e9e770ac306ea763ef186eecfb011e86cf26db6f02fcfccc2c368dfa98",
     ".editorconfig": "f0013dead6c64a1df072d06229dad9d9b4a5cc8bae67bb2ffe1d8da084a56110",
     ".github/ISSUE_TEMPLATE/bug_report.md": "877ff2afe86817cbbe2991d8aeee169fc2b30206dc6e0b2dc4c79fcdc33d732f",
     ".github/ISSUE_TEMPLATE/feature_request.md": "89a45d75e18005edb3d37457d6137f9a418fecea8c357a4d3189979db1526163",
     ".github/PULL_REQUEST_TEMPLATE.md": "5e768a581749c63c97b2cfdf39fd39643f93659349bc2de5c0a6475371691078",
     ".github/workflows/ci.yml.template": "7d889cab19a9d023186a4572e1bc80466bcb61e1dec28d4c7cc4af264c5ac0fe",
     ".github/workflows/release.yml.template": "3b5df00e3154e4e2eacccc96500978a36fd8d2241534a52effb1f159ad7fce4b",
-    ".gitignore": "b9e5be92bd2aed7795a4224e1bfb1f47faa9963102bd25dab58da752308b56bf",
+    ".gitignore": "6b4aae07137f921b3690df2a5e0971a765bc50fb85b7f667db313f19819a899f",
     "CLAUDE.md": "8030c12efaab1080fc80a10731f5491b2e54893730d19a051e1b15a7ac3e00e1",
     "IMPLEMENT.md": "3bc658ae7dee8b928280d14fa2e1c1afc4bbe22dfab053412b0e4546e65ed3f1",
     "RELEASE.md": "ec9d1dece9e08205406b7edda5be04f5b048ed53286c8cafdc251ede3620c4c9"
   },
-  "version": "1.0.0"
+  "version": "0.2.0"
 }

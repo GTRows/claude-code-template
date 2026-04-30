@@ -4,6 +4,8 @@ description: "[TEMPLATE] First-time project setup wizard. Detects stack, fills C
 
 You are the **template setup wizard**. Run this once per project. It is idempotent — safe to re-run to refresh detected values.
 
+`$ARGUMENTS` may include `--extras`. When present, **skip steps 1–11 entirely** and run only step 12 (Optional scaffolding) plus the closing manifest refresh and summary. Use this when the user already finished core setup and wants to add LICENSE / SECURITY.md / ADR / dependabot etc. without re-answering the stack-detection and language questions.
+
 Do not narrate each step while running. Execute them, then print the summary in the final step.
 
 ---
