@@ -34,6 +34,7 @@ GTR COMMANDS — template lifecycle
   /gtr:doctor            Read-only health check (also predictive)
   /gtr:release           Bump, rotate CHANGELOG, commit, tag
   /gtr:new-migration     Scaffold a DB migration
+  /gtr:new-adr           Scaffold an Architecture Decision Record under docs/adr/
   /gtr:help              This help
 
 GSD COMMANDS — planning and execution
