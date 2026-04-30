@@ -52,3 +52,6 @@ htmlcov/
 # package-lock.json
 # yarn.lock
 # pnpm-lock.yaml
+
+# OMC (oh-my-claudecode) local session state
+.omc/
