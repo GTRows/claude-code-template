@@ -16,13 +16,21 @@ Read-only diagnosis of the template's state in this project. Do NOT fix anything
 
 ## 2. `CLAUDE.md` placeholders
 
-Grep `CLAUDE.md` for:
+Run the structural checker:
+
+```bash
+python .claude/scripts/claude_md_check.py
+```
+
+It reports missing required sections (e.g. `## Available commands`, `## Planning workflow`, `## Project Overview`) and sections whose body is empty or HTML-comment-only. Surface its output verbatim.
+
+Then grep for legacy markers too:
 
 - `PROJECT_NAME`
 - Literal `<!-- ` (unresolved comment blocks)
 - Placeholder lines starting with `# npm install / pip install`
 
-Report each remaining placeholder as an unresolved item.
+Report each remaining hit.
 
 ---
 
@@ -74,6 +82,14 @@ Run `claude plugin list`. Cross-check against the recommended set:
 - `frontend-design@claude-code-plugins`
 
 Report any missing certain-set plugins.
+
+Then run the pin checker:
+
+```bash
+python .claude/scripts/plugins.py --check
+```
+
+It compares the currently installed plugins against `.claude/plugin-pin.json` (written by `/gtr:setup` after install). Surface the output: missing plugins are flagged, extras are informational.
 
 ---
 

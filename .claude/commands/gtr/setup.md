@@ -185,6 +185,14 @@ claude plugin install <name>@<marketplace>
 
 Users running Claude Code with `--dangerously-skip-permissions` get silent installs; otherwise they get one prompt per plugin.
 
+**Step 8c — pin the installed set.** After installs land, write the pin file so `/gtr:doctor` can flag drift later:
+
+```bash
+python .claude/scripts/plugins.py --pin
+```
+
+This records `name@marketplace` for every currently installed plugin into `.claude/plugin-pin.json` (committed). The next `/gtr:doctor` run uses it to detect uninstalled or missing plugins.
+
 ---
 
 ## 9. Planning hand-off (GSD)

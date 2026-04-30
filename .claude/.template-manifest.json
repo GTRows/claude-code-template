@@ -1,8 +1,8 @@
 {
   "files": {
     ".claude/TIPS.md": "51d87382e2f0e05eec6ce5c1d8b8bb6ee1ee21fea79503023ac63c87039c2e9e",
-    ".claude/VERSION": "be36d0066e8b6749a88a1c6bf1ce96482157ec618cb7f2aab162d3efae41f4d9",
-    ".claude/commands/gtr/doctor.md": "de6eaf7e384d9a48d5e9ad1bd883b7eb8f4a7b837ffbe41c9d079c0959b6cd85",
+    ".claude/VERSION": "c2f2fc398169dfaf4b6a16077a5938b7361aefac1143f532b17ea18c3229cf3a",
+    ".claude/commands/gtr/doctor.md": "6745ad506fe60094756fd9abaf51428dc90151b40c712a239664c4b2a400e5be",
     ".claude/commands/gtr/help.md": "6ddcae149f2cd540cd6512fbe4ceb1ddf50df28179fd7277a7885649e7802874",
     ".claude/commands/gtr/menu.md": "ae318e6039de4e3509371104e2f931c2f3fc2301347caeae45787f3666474a97",
     ".claude/commands/gtr/new-adr.md": "3c74a99216e4bc02c79afa64635046f63f7d320dd2eef8ce4b8ce81fb12d0fee",
@@ -11,7 +11,7 @@
     ".claude/commands/gtr/new-skill.md": "20bd534840f281f50a95df55043d7599cc3693d066cca2dec7d2c7579b27d8a1",
     ".claude/commands/gtr/onboard.md": "490d7ffffa744e9eec48de897590b5409cc609329bcc283c0f8448c13723c204",
     ".claude/commands/gtr/release.md": "d787739817a55cdb9e5d2d2dbc5f117f9b230a1ab11c92953d1ab067ec624492",
-    ".claude/commands/gtr/setup.md": "133bd597d0a99962eb7fd6bd1dfe355e77c1d343a285ebc81aeed2f3e7cbe948",
+    ".claude/commands/gtr/setup.md": "f0b17fbfc6781a4d570893596863c9ee2d2838805a2fadca246ada9c89a6c2ae",
     ".claude/commands/gtr/update.md": "ce90cc214cb6cfded255f7a4827852602bddde082bda673d9af017ec64c80850",
     ".claude/docs/claude-md-best-practices.md": "0f4522ebf65eba361ac1b2a63c1b83d575716268acf49befbe54949c509a4e4c",
     ".claude/docs/commands.md": "5a2733f33b8e56da29e81324e308e233c0a23474672849e5c39116ec9d8cb64c",
@@ -31,10 +31,12 @@
     ".claude/hooks/pre_guard_security.py": "927cfd4686bfdae84ab9e6f4db4371f6d7850b971f2161aa39a3ea2a60f71d67",
     ".claude/hooks/session_check_setup.py": "9fc370eb91ddad0958b9569a3c8e63e1c9f3a15ada415dbbc7c7ffe2a27c50a3",
     ".claude/hooks/session_log_usage.py": "98b98d2ee45b00eff7142d38dcb8f36d8700d794d3018301b261b54603ca6bcf",
+    ".claude/scripts/claude_md_check.py": "a591b53cbfc89d31203f04e8725ab99a78ae2d492f006b769d63ccc78fb622f8",
     ".claude/scripts/manifest.py": "a1dccca20bc26cdcf4eb5bde178570317625af68bae4870688ee02b969902150",
     ".claude/scripts/migrations.py": "d6ffc907da20eaf40b53a5de7636d0039b86853693f43941c87bdbe213c80895",
     ".claude/scripts/migrations/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     ".claude/scripts/migrations/v0_2_0.py": "3fbfeb97f4c4ff850384ca5c6165e41438b1301170a6942751d49f9d9ec6557d",
+    ".claude/scripts/plugins.py": "910a20dc15a6e2ca15232e9f5a24709067b4ba2ba5e38e61238959727899b315",
     ".claude/settings.json": "64e815e9e770ac306ea763ef186eecfb011e86cf26db6f02fcfccc2c368dfa98",
     ".editorconfig": "f0013dead6c64a1df072d06229dad9d9b4a5cc8bae67bb2ffe1d8da084a56110",
     ".github/ISSUE_TEMPLATE/bug_report.md": "877ff2afe86817cbbe2991d8aeee169fc2b30206dc6e0b2dc4c79fcdc33d732f",
@@ -47,5 +49,5 @@
     "IMPLEMENT.md": "3bc658ae7dee8b928280d14fa2e1c1afc4bbe22dfab053412b0e4546e65ed3f1",
     "RELEASE.md": "ec9d1dece9e08205406b7edda5be04f5b048ed53286c8cafdc251ede3620c4c9"
   },
-  "version": "0.4.0"
+  "version": "0.5.0"
 }

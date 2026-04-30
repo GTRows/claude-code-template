@@ -17,6 +17,15 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ### Fixed
 ### Security
 
+## [0.5.0] - 2026-04-30
+
+### Added
+- `.claude/scripts/claude_md_check.py`: structural drift checker for CLAUDE.md. Reports missing required sections and sections that are still placeholders (HTML-comment-only). Returns non-zero exit code only when required sections are absent. 5 unit tests cover parse, placeholder detection, missing/extra reporting.
+- `.claude/scripts/plugins.py`: plugin set tracker. Records `name@marketplace` for every installed plugin into `.claude/plugin-pin.json` (committed). Drift detection compares the pin against the currently installed set. 6 unit tests cover render, save/load, diff.
+- `/gtr:doctor` section 2 now invokes `claude_md_check.py` before legacy grep checks.
+- `/gtr:doctor` section 5 now invokes `plugins.py --check` after the recommended-plugin check.
+- `/gtr:setup` step 8c writes the plugin pin after install so `/gtr:doctor` can flag drift later.
+
 ## [0.4.0] - 2026-04-30
 
 ### Added
