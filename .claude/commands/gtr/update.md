@@ -7,7 +7,7 @@ Pull updates from the upstream template repo (`https://github.com/GTRows/claude-
 ## Preconditions
 
 1. `.claude/.setup-complete` must exist — refuse if the project has not been set up.
-2. Working tree must be clean (`git status --porcelain` is empty). Refuse with: `Commit or stash first — /update needs a clean tree to write a single update commit.`
+2. Working tree must be clean (`git status --porcelain` is empty). Refuse with: `Commit or stash first — /gtr:update needs a clean tree to write a single update commit.`
 3. `gh` authenticated, OR plain `git` available with network access.
 4. `.claude/VERSION` exists. If missing, treat current version as `0.0.0`.
 
@@ -45,7 +45,7 @@ The project keeps a manifest at `.claude/.template-manifest.json`. Format:
 }
 ```
 
-**If the manifest is missing** (project predates the manifest system, or `/setup` was run on an older template version):
+**If the manifest is missing** (project predates the manifest system, or `/gtr:setup` was run on an older template version):
 
 1. Tell the user explicitly:
    > No `.claude/.template-manifest.json` found. I will seed one from the current local files. Any file you have already modified will be treated as "untouched", so on the next conflict step I will not be able to detect those edits — you will see them as auto-update candidates instead. This is a one-time bootstrap.
@@ -55,7 +55,7 @@ The project keeps a manifest at `.claude/.template-manifest.json`. Format:
    python .claude/scripts/manifest.py --write
    ```
 
-3. Then continue. From this point forward, `/update` works precisely.
+3. Then continue. From this point forward, `/gtr:update` works precisely.
 
 **If the manifest is present**, continue without asking.
 
@@ -83,11 +83,9 @@ For each path that exists in upstream **and** is template-owned (see exclusion l
 | Path missing locally, present upstream | **Add** — write file. |
 | Path present locally, missing upstream | Ask `Upstream removed this file — delete locally?` — default `keep`. |
 
-**Excluded paths** (never touched by `/update`):
+**Excluded paths** (never touched by `/gtr:update`):
 
 ```
-TODO.md
-DEFERRED.md
 CHANGELOG.md
 PROJECT.yaml          (identity is per-project)
 README.md             (per-project doc)
@@ -140,4 +138,4 @@ Review the commit, then `git push` when ready.
 - Never use `git add -A`. Only stage the specific files you wrote.
 - Never rewrite the user's hook customisations (e.g. their additions to `PROTECTED_EXACT`). On conflict, default action is always `keep`.
 - If the upstream removes a hook the user still has registered in `settings.json`, do NOT silently unregister — ask.
-- Run `/doctor` automatically at the end and surface any new drift.
+- Run `/gtr:doctor` automatically at the end and surface any new drift.

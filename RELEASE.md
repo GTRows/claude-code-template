@@ -29,16 +29,16 @@ Every artifact is paired with a `SHA256SUMS` entry.
 
 Before cutting a release:
 
-- [ ] All targeted `TODO.md` tasks are in Done and the acceptance is verifiable.
+- [ ] All GSD plans included in this version are complete (`/gsd:progress` shows them done).
 - [ ] `CHANGELOG.md` has an `## [Unreleased]` section with the actual changes — no stubs.
 - [ ] `PROJECT.yaml#version` matches the target version.
-- [ ] Derived manifests (`package.json`, `pyproject.toml`, `Cargo.toml`, etc.) match `PROJECT.yaml#version`. Run `/doctor` to verify.
+- [ ] Derived manifests (`package.json`, `pyproject.toml`, `Cargo.toml`, etc.) match `PROJECT.yaml#version`. Run `/gtr:doctor` to verify.
 - [ ] CI on `main` is green.
 - [ ] Screenshots for any visual changes saved under `assets/release/v<version>/`.
 
 ## Cut the release
 
-Use `/release` to do steps 1–4 mechanically, or do them by hand:
+Use `/gtr:release` to do steps 1–4 mechanically, or do them by hand:
 
 1. Bump `PROJECT.yaml#version` to the new version.
 2. In `CHANGELOG.md`, rename `## [Unreleased]` to `## [x.y.z] - YYYY-MM-DD`. Open a fresh `## [Unreleased]` above it with empty sections.

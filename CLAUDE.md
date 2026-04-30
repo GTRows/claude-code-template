@@ -5,35 +5,40 @@ This file provides guidance to Claude Code when working with code in this reposi
 ## First-time setup check
 
 Before doing any coding work, check for `.claude/.setup-complete`.
-- If missing: recommend `/setup` to the user and wait for confirmation before starting implementation. Read-only questions and template maintenance are fine without it.
+- If missing: recommend `/gtr:setup` to the user and wait for confirmation before starting implementation. Read-only questions and template maintenance are fine without it.
 - If present: proceed normally.
 
 ## Available commands
 
-- `/menu` — interactive entry point. Pick what to do, Claude routes to the right command.
-- `/tpl` — list every template command, hook, and file in this repo.
-- `/setup` — first-time wizard (only needed once per clone).
-- `/onboard` — interactive runbook to merge the template into an existing project.
-- `/update` — pull template updates from upstream and merge them non-destructively.
-- `/task <subcommand>` — manage persistent TODO.md tasks. Key subcommands: `next` (one task), `run [--isolated]` (all Active tasks end-to-end), `roadmap <goal>` (generate a phased task plan). `/task` alone prints usage.
-- `/doctor` — read-only health check (also reports template version drift and manifest drift).
-- `/release <version>` — prepare a release (bump, rotate CHANGELOG, commit, tag). Never pushes.
+- `/gtr:menu` — interactive entry point. Pick what to do, Claude routes to the right command.
+- `/gtr:help` — list every template command, hook, and file in this repo.
+- `/gtr:setup` — first-time wizard (only needed once per clone).
+- `/gtr:onboard` — interactive runbook to merge the template into an existing project.
+- `/gtr:update` — pull template updates from upstream and merge them non-destructively.
+- `/gtr:doctor` — read-only health check (also reports template version drift and manifest drift).
+- `/gtr:release <version>` — prepare a release (bump, rotate CHANGELOG, commit, tag). Never pushes.
 - Plugin commands: `/commit`, `/commit-push-pr`, `/review-pr`, `/revise-claude-md`, `/create-skill`.
 
-## Task workflow
+## Planning workflow (GSD)
 
-Two layers — do not conflate them:
+This template delegates planning and execution to **GSD** (Get Shit Done) — a plugin that produces durable, disk-backed phase plans and runs each plan in an isolated subagent. This is the token-efficient default.
 
-1. **TODO.md (persistent)** — durable tasks across sessions. Managed via `/task`. Each entry has an id (`t-N`), a title, and an Acceptance line. Sections: Active / Blocked / Done.
-2. **Built-in TaskCreate (ephemeral)** — this session's subtask breakdown of whatever TODO task is in flight. Use it to plan and track step-by-step work within the conversation. Do not mirror TODO.md into it.
+Two layers:
+
+1. **GSD planning artifacts (persistent)** — `.planning/PROJECT.md` (vision), `.planning/ROADMAP.md` (phases), `.planning/STATE.md` (memory), `.planning/phases/<N>-<name>/<N>-<P>-PLAN.md`. Survives sessions.
+2. **Built-in TaskCreate (ephemeral)** — current-session subtask breakdown of the in-flight plan. Do not mirror plan content into it.
 
 When starting work:
-- One task at a time: `/task next` (moves it to top of Active, breaks into `TaskCreate` subtasks).
-- Whole queue: `/task run` (processes every Active task end-to-end: plan → implement → test → commit → `done` gate → next task). Stops on failure, keeps unfinished work in Active.
-- Step through subtasks one at a time. Mark each completed as soon as done, not in a batch.
-- When the TODO task's acceptance is met AND tests pass AND a commit exists referencing its id, call `/task done <id>`. The verification gate in `/task` enforces this.
+- New project: `/gsd:new-project` then `/gsd:create-roadmap`.
+- Existing codebase: `/gsd:map-codebase` first, then `/gsd:new-project`.
+- Plan a phase: `/gsd:plan-phase <N>`.
+- Execute a plan: `/gsd:execute-plan <path>`. Runs in a subagent — main context stays light.
+- Resume after a break: `/gsd:resume-work` or `/gsd:progress`.
+- Insert urgent work: `/gsd:insert-phase <after-N> "<description>"`.
 
-Do not leave a task half-implemented to start another. Finish or explicitly block (`/task block <id> <reason>`).
+Always finish the in-flight plan before starting another. Use `/gsd:pause-work` to capture context if you must stop mid-plan.
+
+`/gtr:menu` surfaces these as numbered options if you do not want to remember command names.
 
 ## Project Overview
 
@@ -127,22 +132,22 @@ The following files are protected by a pre-commit hook and require explicit user
   - Example: `feat(api): add rate limiting to /users endpoint`
 - Keep commit messages in English, concise, imperative mood.
 - One logical change per commit. Do not bundle unrelated changes.
-- Reference the TODO.md task id in the commit subject when applicable: `feat(api): add rate limit (t-42)`.
+- Reference the GSD plan or phase in the commit subject when applicable: `feat(api-01-01): add rate limit` or `feat(api): add rate limit (phase 3)`.
 - Commits are authored by the user via local git config. Do NOT add `Co-Authored-By: Claude` trailers to commit messages.
 
 ## What NOT to Do
 
 - Do not add `console.log` / `print()` for debugging. Use proper logging.
-- Do not add TODO comments. Track work in TODO.md, DEFERRED.md, or the issue tracker.
+- Do not add TODO comments. Track work in `.planning/` (via GSD) or the issue tracker.
 - Do not write defensive code against impossible states.
 - Do not add polyfills unless the minimum supported version requires them.
 - Do not add external dependencies without discussing first.
 
 ## Deferred Work
 
-Work that is intentionally postponed goes in `DEFERRED.md` at the repo root.
+Work that is intentionally postponed goes in GSD's `.planning/ISSUES.md`.
 Each entry must have: what, why deferred, concrete trigger that unblocks it, owner.
-See `.claude/TIPS.md` for the format. Do not leave TODO comments in code instead.
+Surface deferred items with `/gsd:consider-issues`. Do not leave TODO comments in code.
 
 ## Release
 
@@ -150,5 +155,5 @@ See `.claude/TIPS.md` for the format. Do not leave TODO comments in code instead
 - **Changelog**: `CHANGELOG.md` uses the Keep a Changelog format. The release workflow extracts notes from the matching `## [x.y.z]` section.
 - **Runbook**: See `RELEASE.md` for the end-to-end release procedure (preflight, cut, post-release, rollback).
 - **Automation**: `.github/workflows/release.yml` triggers on tag push `v*.*.*`. Release is test-gated, matrix-built per platform, checksum-signed, and draft-first — a maintainer publishes manually.
-- **Version bumps**: Use `/release <version>` to do the mechanical steps (bump `PROJECT.yaml`, rotate `CHANGELOG.md`, sync derived manifests, commit, tag). Push is always manual.
-- **Identity drift**: If `PROJECT.yaml` disagrees with a derived manifest, `PROJECT.yaml` wins. `/doctor` reports drift; fix it by updating the derived file, never the other direction.
+- **Version bumps**: Use `/gtr:release <version>` to do the mechanical steps (bump `PROJECT.yaml`, rotate `CHANGELOG.md`, sync derived manifests, commit, tag). Push is always manual.
+- **Identity drift**: If `PROJECT.yaml` disagrees with a derived manifest, `PROJECT.yaml` wins. `/gtr:doctor` reports drift; fix it by updating the derived file, never the other direction.

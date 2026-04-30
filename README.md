@@ -21,18 +21,18 @@ rm -f .claude/.setup-complete
 # 3. Open Claude Code and run the wizard in a fresh session
 claude
 # then inside Claude Code:
-/setup
+/gtr:setup
 ```
 
-`/setup` detects the stack, fills `CLAUDE.md`, writes `PROJECT.yaml`, installs recommended plugins, and sets up task tracking. Idempotent — safe to re-run.
+`/gtr:setup` detects the stack, fills `CLAUDE.md`, writes `PROJECT.yaml`, installs recommended plugins, and sets up task tracking. Idempotent — safe to re-run.
 
 ### B. Implement into an existing project
 
 Two options:
 
-1. **Recommended — `/onboard`**: clone the template into a temp dir, copy in the slash commands and hooks (or have someone copy `.claude/commands/onboard.md` over once), then run:
+1. **Recommended — `/gtr:onboard`**: clone the template into a temp dir, copy in the slash commands and hooks (or have someone copy `.claude/commands/onboard.md` over once), then run:
    ```
-   /onboard
+   /gtr:onboard
    ```
    The runbook walks you through every file decision interactively (apply / skip / view-diff). Your `README.md`, `package.json`, and existing configs are never touched. See [.claude/commands/onboard.md](./.claude/commands/onboard.md).
 
@@ -46,14 +46,13 @@ Two options:
 
 | Command | Purpose |
 |---------|---------|
-| `/menu` | Interactive entry point — pick what to do, Claude routes to the right command. |
-| `/setup` | First-time project wizard. Asks conversation language + i18n, fills CLAUDE.md, installs plugins, scaffolds task files, writes the template manifest. |
-| `/update` | Pull template updates from upstream and merge non-destructively (uses sha-keyed manifest to detect user modifications). |
-| `/task <sub>` | Persistent TODO.md tasks. Subcommands: `list`, `next`, `run [--isolated]`, `add`, `done`, `block`, `update`, `plan`, `roadmap`. `run --isolated` dispatches each task to a worktree-isolated subagent; `roadmap <goal>` generates a phased plan with negative-filter approval. |
-| `/doctor` | Read-only health check: setup marker, plugin status, CLAUDE.md placeholders, identity drift, secrets, template version drift, manifest drift. |
-| `/release <ver>` | Prepare a release: bump PROJECT.yaml, rotate CHANGELOG, sync manifests, commit, tag. Never pushes. |
-| `/tpl` | Discovery: list every template command, hook, and file. |
-| `/new-migration` | Scaffold a DB migration following detected conventions. |
+| `/gtr:menu` | Interactive entry point — pick what to do, Claude routes to the right command. |
+| `/gtr:setup` | First-time project wizard. Asks conversation language + i18n, fills CLAUDE.md, installs plugins, scaffolds task files, writes the template manifest. |
+| `/gtr:update` | Pull template updates from upstream and merge non-destructively (uses sha-keyed manifest to detect user modifications). |
+| `/gtr:doctor` | Read-only health check: setup marker, plugin status, CLAUDE.md placeholders, identity drift, secrets, template version drift, manifest drift. |
+| `/gtr:release <ver>` | Prepare a release: bump PROJECT.yaml, rotate CHANGELOG, sync manifests, commit, tag. Never pushes. |
+| `/gtr:help` | Discovery: list every template command, hook, and file. |
+| `/gtr:new-migration` | Scaffold a DB migration following detected conventions. |
 
 ### Hooks (`.claude/hooks/`)
 
@@ -63,7 +62,7 @@ Two options:
 | `pre_guard_security.py` | PreToolUse Write/Edit | Blocks dangerous patterns (innerHTML, eval, `shell=True`, SQL injection, ...) |
 | `pre_guard_env_secrets.py` | PreToolUse Write/Edit | Blocks hardcoded secrets and writes to `.env*` files |
 | `post_validate_syntax.py` | PostToolUse Write/Edit | Validates Python / JS / JSON syntax after writes |
-| `session_check_setup.py` | SessionStart | Injects `/setup` reminder when marker is missing |
+| `session_check_setup.py` | SessionStart | Injects `/gtr:setup` reminder when marker is missing |
 | `pre_check_setup.py` | UserPromptSubmit | Injects the same reminder on every prompt until setup completes (soft, never blocks) |
 | `optional/pre_warn_win32_danger.py` | opt-in | Warns on HKLM writes, `SystemParametersInfo`, UAC elevation, `advapi32` calls |
 
@@ -81,20 +80,22 @@ Three layers:
 | `PROJECT.yaml` | Single source of truth for name, display_name, version, icon, license, release config. Every derived manifest follows it. |
 | `CHANGELOG.md` | Keep-a-Changelog format. Release notes extracted from `## [x.y.z]` section matching the pushed tag. |
 | `RELEASE.md` | End-to-end runbook: preflight, cut, post-release, rollback, versioning rules. |
-| `.github/workflows/release.yml.template` | Tag-triggered, test-gated, matrix build, checksum, draft-first GitHub Release. Activated by `/setup` on opt-in. |
-| `.github/workflows/ci.yml.template` | Lint + test on push/PR. Activated by `/setup` on opt-in. |
+| `.github/workflows/release.yml.template` | Tag-triggered, test-gated, matrix build, checksum, draft-first GitHub Release. Activated by `/gtr:setup` on opt-in. |
+| `.github/workflows/ci.yml.template` | Lint + test on push/PR. Activated by `/gtr:setup` on opt-in. |
 
-### Task tracking
+### Planning (powered by GSD)
 
-Two layers — do not conflate:
-- **TODO.md (persistent)** — cross-session tasks with ids (`t-N`) and acceptance criteria. Managed via `/task`.
-- **Built-in `TaskCreate` (ephemeral)** — subtask breakdown for the current Claude Code session only.
+The template delegates planning and execution to the **GSD** plugin (`oh-my-claudecode`). GSD writes durable phase plans to `.planning/` and runs each plan in a worktree-isolated subagent — main context stays at ~5% so token cost is predictable.
 
-A verification gate in `/task done` checks: acceptance met, test present (or waived), commit exists referencing the task id.
+Two layers:
+- **`.planning/` (persistent)** — `PROJECT.md` (vision), `ROADMAP.md` (phases), `STATE.md` (memory), `phases/<N>-<name>/<N>-<P>-PLAN.md` (the plan being executed). Survives sessions.
+- **Built-in `TaskCreate` (ephemeral)** — current-session subtask breakdown of the in-flight plan.
+
+Use `/gtr:menu` if you do not want to learn GSD's command names directly. It surfaces every option as a numbered choice and routes to the right `/gsd:*` command underneath.
 
 ### Recommended plugins
 
-Installed globally (user scope) by `/setup`:
+Installed globally (user scope) by `/gtr:setup`:
 
 | Plugin | What it does |
 |--------|--------------|
@@ -113,10 +114,10 @@ Plugins live in user scope, so one install covers every project.
 
 ## Philosophy
 
-- **Single source of truth.** Identity lives in `PROJECT.yaml`. Everything else derives. `/doctor` reports drift.
+- **Single source of truth.** Identity lives in `PROJECT.yaml`. Everything else derives. `/gtr:doctor` reports drift.
 - **Hooks over vibes.** Guardrails are enforced by scripts, not reminders. You cannot accidentally commit an `.env` or force-push main.
-- **Opt-in over magic.** Release automation and optional hooks are copied on opt-in during `/setup`, not imposed.
-- **Two-tier tasks.** Persistent work lives in `TODO.md` across sessions; ephemeral breakdown lives in Claude's built-in task list within a session.
+- **Opt-in over magic.** Release automation and optional hooks are copied on opt-in during `/gtr:setup`, not imposed.
+- **Planning lives on disk, not in chat.** Phase plans live under `.planning/` (managed by GSD). Each plan executes in an isolated subagent so the main context stays light.
 - **Plugins over bundled skills.** General-purpose capabilities live in global plugins; only project-specific skills go in `.claude/skills/`.
 - **Senior-level releases.** Tag-triggered, test-gated, draft-first, checksum-signed, rollback-documented.
 
@@ -124,9 +125,9 @@ Plugins live in user scope, so one install covers every project.
 
 ## Customization
 
-After `/setup`:
+After `/gtr:setup`:
 
-- **Identity**: edit `PROJECT.yaml`. Run `/doctor` to catch drift in derived manifests.
+- **Identity**: edit `PROJECT.yaml`. Run `/gtr:doctor` to catch drift in derived manifests.
 - **Protected files**: adjust `PROTECTED_EXACT` / `PROTECTED_DIRS` in `.claude/hooks/pre_guard_release_files.py`.
 - **Security patterns**: extend `DANGEROUS_PATTERNS` in `.claude/hooks/pre_guard_security.py` for project-specific sinks.
 - **Secret patterns**: extend `SECRET_PATTERNS` in `.claude/hooks/pre_guard_env_secrets.py` for vendor token formats.

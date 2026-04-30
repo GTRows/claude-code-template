@@ -1,0 +1,95 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1777467036129,
+  "projectRoot": "D:\\Workspace\\Self\\OpenSource\\claude-code-template",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": "cd \"D:/Workspace/Self/OpenSource/claude-code-template\" && python .claude/scripts/manifest.py --write && python -m pytest .claude/hooks/tests -q 2>&1 | tail -3",
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {},
+  "hotPaths": [
+    {
+      "path": "CLAUDE.md",
+      "accessCount": 5,
+      "lastAccessed": 1777470590806,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 3,
+      "lastAccessed": 1777470624083,
+      "type": "file"
+    },
+    {
+      "path": ".claude\\commands\\gtr\\setup.md",
+      "accessCount": 3,
+      "lastAccessed": 1777470890701,
+      "type": "file"
+    },
+    {
+      "path": ".claude\\commands\\gtr\\menu.md",
+      "accessCount": 2,
+      "lastAccessed": 1777470813259,
+      "type": "file"
+    },
+    {
+      "path": ".claude\\TIPS.md",
+      "accessCount": 2,
+      "lastAccessed": 1777470954280,
+      "type": "file"
+    },
+    {
+      "path": ".claude\\scripts\\manifest.py",
+      "accessCount": 2,
+      "lastAccessed": 1777537853077,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\aciro\\.claude\\commands\\gsd\\help.md",
+      "accessCount": 1,
+      "lastAccessed": 1777467664288,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\aciro\\.claude\\commands\\gsd\\execute-plan.md",
+      "accessCount": 1,
+      "lastAccessed": 1777467669775,
+      "type": "file"
+    },
+    {
+      "path": "IMPLEMENT.md",
+      "accessCount": 1,
+      "lastAccessed": 1777470637810,
+      "type": "file"
+    },
+    {
+      "path": "RELEASE.md",
+      "accessCount": 1,
+      "lastAccessed": 1777537788511,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

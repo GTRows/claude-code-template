@@ -7,7 +7,7 @@ You are preparing a release. `$ARGUMENTS` is the target version (e.g. `1.2.3` or
 If empty, print usage and stop:
 
 ```
-/release <version>
+/gtr:release <version>
 
 version   semver: MAJOR.MINOR.PATCH[-prerelease]
           examples: 1.2.3, 2.0.0, 1.2.0-rc.1
@@ -35,8 +35,8 @@ On any failure: stop and report which check failed. Do not touch the repo.
 If a check fails, surface the specific fix instead of just the abort:
 
 - **Check 4 (CHANGELOG missing or empty)**:
-  - File missing → `/setup` was likely run with release scaffolding off. Tell the user: "CHANGELOG.md is missing. Either re-run `/setup` and pick `yes` for release scaffolding, or copy the template skeleton manually from the upstream repo's CHANGELOG.md."
-  - File present but `## [Unreleased]` is empty or has only empty subsections → tell the user: "Add at least one bullet under `## [Unreleased]` in CHANGELOG.md before running `/release` again. Bullets describe what changed since the last release."
+  - File missing → `/gtr:setup` was likely run with release scaffolding off. Tell the user: "CHANGELOG.md is missing. Either re-run `/gtr:setup` and pick `yes` for release scaffolding, or copy the template skeleton manually from the upstream repo's CHANGELOG.md."
+  - File present but `## [Unreleased]` is empty or has only empty subsections → tell the user: "Add at least one bullet under `## [Unreleased]` in CHANGELOG.md before running `/gtr:release` again. Bullets describe what changed since the last release."
   - File present but `## [Unreleased]` heading is missing → tell the user: "Add a `## [Unreleased]` section at the top of CHANGELOG.md (above the most recent version section) with the change bullets."
 - **Check 1 (uncommitted changes)**: list the offending files; suggest `git stash` or commit.
 - **Check 7 (version not going forward)**: print current and target; suggest the next valid bump.
@@ -93,7 +93,7 @@ git tag -a v<version> -m "Release v<version>"
 
 ## Do NOT push
 
-`/release` never pushes automatically. Print the next steps and stop:
+`/gtr:release` never pushes automatically. Print the next steps and stop:
 
 ```
 Prepared v<version>.

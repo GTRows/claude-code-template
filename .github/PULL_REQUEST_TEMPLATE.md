@@ -2,9 +2,9 @@
 
 <!-- What does this PR do? 1-3 bullet points. -->
 
-## TODO task
+## Plan reference
 
-<!-- If this PR closes a TODO.md task, reference its id here (e.g. Closes t-42). -->
+<!-- If this PR completes a GSD plan, reference it (e.g. Closes phase 03-01-PLAN). -->
 
 ## Changes
 

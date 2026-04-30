@@ -8,9 +8,9 @@ You are onboarding the **template into the user's existing project**. This is th
 
 Refuse and stop if any of these hold:
 
-- The project does not have a `.git` directory. Tell the user: `Run git init first, commit your existing work, then re-run /onboard.`
-- `git status --porcelain` is non-empty. Tell the user: `Working tree is dirty. Commit or stash, then re-run /onboard.`
-- `.claude/.setup-complete` already exists. Tell the user: `This project is already onboarded. Use /update to pull the latest template; use /setup to re-run the wizard idempotently.`
+- The project does not have a `.git` directory. Tell the user: `Run git init first, commit your existing work, then re-run /gtr:onboard.`
+- `git status --porcelain` is non-empty. Tell the user: `Working tree is dirty. Commit or stash, then re-run /gtr:onboard.`
+- `.claude/.setup-complete` already exists. Tell the user: `This project is already onboarded. Use /gtr:update to pull the latest template; use /gtr:setup to re-run the wizard idempotently.`
 
 If preflight passes, print:
 
@@ -21,7 +21,7 @@ I will:
   1. Clone the latest template tag to a temp dir.
   2. Walk through file-by-file decisions (hooks, commands, settings, docs).
   3. Apply only what you approve.
-  4. Run /setup at the end to fill CLAUDE.md and PROJECT.yaml.
+  4. Run /gtr:setup at the end to fill CLAUDE.md and PROJECT.yaml.
 
 Proceed? (yes / no)
 ```
@@ -76,7 +76,7 @@ If the user has a CLAUDE.md, do NOT overwrite. Offer each missing section indivi
 
 - `## First-time setup check`
 - `## Available commands`
-- `## Task workflow`
+- `## Planning workflow (GSD)`
 - `## Release` (only if release scaffolding was opted in)
 - Commit-authorship line under `## Git and Commits`
 
@@ -84,13 +84,17 @@ Ask `add / skip / customize` per section.
 
 ### 2f. Root-level files
 
-For each of `PROJECT.yaml`, `TODO.md`, `DEFERRED.md`, `IMPLEMENT.md`, `RELEASE.md`, `CHANGELOG.md`:
+For each of `PROJECT.yaml`, `IMPLEMENT.md`, `RELEASE.md`, `CHANGELOG.md`:
 - If missing, ask: `add <file>? (yes / no)`. If yes, copy from template.
 - If present, leave alone.
 
+### 2g.b Planning hand-off
+
+Ask the user: `Use GSD for planning? (yes / no / later)`. If yes, after the onboarding commit lands, suggest `/gsd:map-codebase` then `/gsd:new-project` so brief auto-fills from the now-merged template files. Do NOT run those commands inside `/gtr:onboard`.
+
 ### 2g. Workflows (opt-in only)
 
-Copy `.github/workflows/ci.yml.template` and `.github/workflows/release.yml.template` (note the `.template` suffix is preserved). Tell the user activation happens via `/setup` step 10/11.
+Copy `.github/workflows/ci.yml.template` and `.github/workflows/release.yml.template` (note the `.template` suffix is preserved). Tell the user activation happens via `/gtr:setup` step 10/11.
 
 ### 2h. `.gitignore` merge
 
@@ -102,7 +106,7 @@ Append upstream lines that are missing locally. Show the diff before writing. Al
 
 ### 2i. Hook tests gitignore note
 
-Tell the user: `The hook tests directory is included. Add to your existing CI run via .github/workflows/ci.yml.template if you opt into CI in /setup.`
+Tell the user: `The hook tests directory is included. Add to your existing CI run via .github/workflows/ci.yml.template if you opt into CI in /gtr:setup.`
 
 ## 3. Write the manifest
 
@@ -112,7 +116,7 @@ After all approved changes are applied:
 python .claude/scripts/manifest.py --write
 ```
 
-This snapshots every template-owned file's sha so `/update` can later detect what the user has touched.
+This snapshots every template-owned file's sha so `/gtr:update` can later detect what the user has touched.
 
 ## 4. Stage and commit
 
@@ -125,18 +129,18 @@ git commit -m "chore: adopt claude-code-template (${TEMPLATE_TAG})"
 
 Do NOT push.
 
-## 5. Hand off to /setup
+## 5. Hand off to /gtr:setup
 
 Tell the user:
 
 ```
 Template onboarded at ${TEMPLATE_TAG}.
 
-Next: run /setup to fill in CLAUDE.md / PROJECT.yaml from your project's
+Next: run /gtr:setup to fill in CLAUDE.md / PROJECT.yaml from your project's
 detected stack, install plugins, and complete first-time configuration.
 ```
 
-Do not invoke `/setup` automatically — it has its own confirm gates.
+Do not invoke `/gtr:setup` automatically — it has its own confirm gates.
 
 ## 6. Cleanup
 
@@ -145,6 +149,6 @@ Remove `${TEMPLATE_DIR}` only after the user confirms everything looks right.
 ## Guardrails
 
 - One decision at a time. Never batch-apply.
-- `README.md`, `LICENSE`, `package.json` (and other manifests) are NEVER touched by `/onboard`.
+- `README.md`, `LICENSE`, `package.json` (and other manifests) are NEVER touched by `/gtr:onboard`.
 - If at any point the user types `stop` / `cancel`, stop immediately. Already-applied changes stay staged but uncommitted so the user can review with `git diff --staged`.
 - Refuse to onboard a fork of an unrelated project (detect via `git remote get-url origin` not matching template repo). Ask explicit confirmation if the remote is unfamiliar.

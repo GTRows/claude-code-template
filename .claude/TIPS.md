@@ -16,7 +16,7 @@ A reference for getting the most out of Claude Code on this project.
 .claude/commands/                # Custom slash commands
 .claude/rules/                   # Optional topic-split rules
 CLAUDE.md                        # Project instructions (tracked in git)
-DEFERRED.md                      # Postponed work with explicit triggers (optional)
+.planning/                       # GSD planning artifacts (optional, opt-in via /gtr:setup)
 ```
 
 ---
@@ -34,7 +34,7 @@ They are configured in `.claude/settings.json`.
 | `pre_guard_security.py` | PreToolUse Write/Edit | Blocks dangerous patterns (innerHTML, eval, SQL injection, etc.) |
 | `pre_guard_env_secrets.py` | PreToolUse Write/Edit | Blocks hardcoded secrets and writing to .env files |
 | `post_validate_syntax.py` | PostToolUse Write/Edit | Validates syntax (Python, JS, JSON) after writes |
-| `session_check_setup.py` | SessionStart | Injects a `/setup` reminder when the marker is missing |
+| `session_check_setup.py` | SessionStart | Injects a `/gtr:setup` reminder when the marker is missing |
 | `pre_check_setup.py` | UserPromptSubmit | Injects the same reminder on every prompt until setup is done (does not block) |
 
 ### Optional Hooks (opt-in)
@@ -122,26 +122,25 @@ The frontmatter `description` shows in `/help`. The body is the prompt Claude ru
 
 | Command | Purpose |
 |---------|---------|
-| `/setup` | First-time project wizard. Detects stack, fills CLAUDE.md, installs plugins, writes setup marker. |
-| `/task <sub>` | Manage persistent TODO.md tasks (list, next, add, done, block, update, plan). |
-| `/doctor` | Read-only health check (setup marker, plugins, placeholders, identity drift, hooks, secrets). |
-| `/release <ver>` | Prepare a release: bump PROJECT.yaml, rotate CHANGELOG, commit, tag. Never pushes. |
-| `/tpl` | Lists every template command, hook, and file — the discovery entry point. |
-| `/new-migration` | Creates a new DB migration file following the project's conventions. |
+| `/gtr:setup` | First-time project wizard. Detects stack, fills CLAUDE.md, installs plugins, writes setup marker. |
+| `/gtr:doctor` | Read-only health check (setup marker, plugins, placeholders, identity drift, hooks, secrets). |
+| `/gtr:release <ver>` | Prepare a release: bump PROJECT.yaml, rotate CHANGELOG, commit, tag. Never pushes. |
+| `/gtr:help` | Lists every template command, hook, and file — the discovery entry point. |
+| `/gtr:new-migration` | Creates a new DB migration file following the project's conventions. |
 
 All template commands have `[TEMPLATE]` as the first word in their frontmatter
 description so they sort together in `/help` and are easy to tell apart from
 plugin commands.
 
 Name project commands to avoid collisions with Anthropic plugins
-(e.g. `/review` is taken by the pr-review-toolkit plugin — use `/tpl` or
+(e.g. `/review` is taken by the pr-review-toolkit plugin — use `/gtr:help` or
 template-prefixed names).
 
 ---
 
 ## Recommended Plugins (install globally)
 
-`/setup` installs these automatically. They are listed here for manual reference.
+`/gtr:setup` installs these automatically. They are listed here for manual reference.
 Plugins live in user scope and become available in every project.
 
 Certain (installed in every project):
@@ -176,8 +175,8 @@ skills into `.claude/skills/`.
 ### Task trackers (compatible, not bundled)
 
 Vibe Kanban and similar external task boards are compatible with this template's
-`TODO.md` flow — they are not mutually exclusive. Treat external boards as the
-source of truth for cross-team work; keep `TODO.md` for the handful of items
+`.planning/` flow — they are not mutually exclusive. Treat external boards as the
+source of truth for cross-team work; keep `.planning/` for the handful of items
 the AI assistant is actively driving. Do not mirror one into the other.
 
 ---
@@ -239,7 +238,7 @@ Pattern syntax:
 
 Senior-level release flow baked into the template. Key principles:
 
-- **Single source of truth for identity.** `PROJECT.yaml` at repo root owns `name`, `display_name`, `version`, `icon`, license, and release config. Every derived file (package.json, installer metadata, GH release title, tag name, artifact file name) follows it. No drift by design. `/doctor` reports any drift; fix by updating the derived file.
+- **Single source of truth for identity.** `PROJECT.yaml` at repo root owns `name`, `display_name`, `version`, `icon`, license, and release config. Every derived file (package.json, installer metadata, GH release title, tag name, artifact file name) follows it. No drift by design. `/gtr:doctor` reports any drift; fix by updating the derived file.
 - **Changelog-driven notes.** `CHANGELOG.md` in Keep-a-Changelog format. The release workflow extracts the body of the `## [x.y.z]` section matching the pushed tag and uses it as the GitHub release notes. No ad-hoc descriptions.
 - **Tag-triggered, test-gated, draft-first.** `.github/workflows/release.yml` runs on push of `v*.*.*` tags. It runs tests first, verifies a CHANGELOG entry exists for the version, builds in a matrix per platform, computes SHA-256 checksums, creates a **draft** GitHub Release with artifacts + notes attached, and stops. A maintainer publishes manually.
 - **Versioning.** Semver only. Tag format `v<version>`. Pre-release suffixes (`-rc.1`, `-beta.2`, ...) must match `PROJECT.yaml#release.prerelease_tags` — workflow detects and flags the release as pre-release automatically.
@@ -247,14 +246,14 @@ Senior-level release flow baked into the template. Key principles:
 - **Screenshots.** Under `assets/release/v<version>/`. Embed into the draft release body manually before publishing.
 - **Rollback.** Never delete a pushed tag. Patch-forward, or mark the broken release as pre-release with a notice. See `RELEASE.md` for procedures.
 
-Mechanics handled by `/release <version>`:
+Mechanics handled by `/gtr:release <version>`:
 1. Validates version (semver regex), tag doesn't exist, `CHANGELOG.md#Unreleased` has content, working tree clean.
 2. Bumps `PROJECT.yaml#version`.
 3. Rotates `CHANGELOG.md`: renames `## [Unreleased]` → `## [version] - <date>`, inserts a fresh `## [Unreleased]`.
 4. Syncs `package.json` / `pyproject.toml` / `Cargo.toml` version if they exist.
 5. Commits and tags locally. Does **not** push — you review, then `git push && git push --tags`.
 
-When `/setup` detects that a project wants release automation, it copies `release.yml.template` to `.github/workflows/release.yml` and flags the REPLACE markers (test command, per-platform build command) for customization.
+When `/gtr:setup` detects that a project wants release automation, it copies `release.yml.template` to `.github/workflows/release.yml` and flags the REPLACE markers (test command, per-platform build command) for customization.
 
 ---
 
@@ -264,14 +263,14 @@ When you clone this template into a new project, the setup state is:
 
 1. `.claude/.setup-complete` does not exist.
 2. `CLAUDE.md` has `PROJECT_NAME` and placeholder blocks.
-3. `TODO.md` exists with empty sections.
+3. Planning state initialised when the user opted into GSD (`.planning/PROJECT.md` present).
 4. The `SessionStart` and `UserPromptSubmit` hooks inject a reminder into Claude's context (soft nudge, no blocking).
 
-The reminder tells Claude to recommend `/setup` before starting implementation
+The reminder tells Claude to recommend `/gtr:setup` before starting implementation
 work. It does not stop the user from asking read-only questions or doing
 template maintenance.
 
-Run `/setup` once. It:
+Run `/gtr:setup` once. It:
 1. Detects the stack from `package.json`, `pyproject.toml`, `go.mod`, etc.
 2. Fills CLAUDE.md placeholders with concrete values.
 3. Opens TODO tasks for sections it could not fill (architecture, module breakdown, data storage, commit scopes).
@@ -279,33 +278,25 @@ Run `/setup` once. It:
 5. Installs the recommended plugins via `claude plugin install`.
 6. Writes `.claude/.setup-complete` and adds it to `.gitignore`.
 
-After `/setup` finishes, the reminder hook goes silent and normal work proceeds.
-`/setup` is idempotent — re-running it refreshes detected values.
+After `/gtr:setup` finishes, the reminder hook goes silent and normal work proceeds.
+`/gtr:setup` is idempotent — re-running it refreshes detected values.
 
 ---
 
-## DEFERRED.md Convention (optional)
+## Deferred work (GSD ISSUES.md)
 
-For work you postpone intentionally — "we'll do this when X happens" —
-log it in a root-level `DEFERRED.md` instead of a TODO comment in code.
+Work that is intentionally postponed lives in `.planning/ISSUES.md` (managed by GSD). Each entry must answer: what, why deferred, concrete trigger that unblocks it, owner. Surface ready-to-act items with `/gsd:consider-issues`.
 
-Each entry should have:
-- **What** — one line describing the deferred work
-- **Why deferred** — the reason it is not being done now
-- **Trigger** — the concrete condition that unblocks it
-- **Owner** — who brings it back on the table
+Do NOT leave TODO comments in code instead — those rot silently.
 
-Example:
+Example entry shape (mirrors GSD's ISSUES.md):
 
-```markdown
+```
 ## Switch Postgres to managed instance
 - Why deferred: current workload fits the self-hosted container; cost not yet justified
 - Trigger: monthly DB CPU > 60% sustained for 7 days, OR team > 5 engineers
 - Owner: infra
 ```
-
-Why this works: TODO comments rot silently in code. `DEFERRED.md` makes the
-decision explicit and gives you a trigger to revisit it.
 
 ---
 

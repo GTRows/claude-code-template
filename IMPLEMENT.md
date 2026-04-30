@@ -43,8 +43,7 @@ Read, do NOT blindly copy. Decide per-file whether to merge, skip, or ask.
 | `.claude/VERSION` | **Copy** | Template version pin. |
 | `CLAUDE.md` | **Merge carefully** | See section 4. |
 | `PROJECT.yaml` | **Create if missing** | If present, leave it alone. |
-| `TODO.md` | **Create if missing** | Do NOT overwrite existing. |
-| `DEFERRED.md` | **Create if missing** | Do NOT overwrite existing. |
+| `.planning/` | **Defer to GSD** | Do NOT create. After onboarding, suggest `/gsd:new-project` (or `/gsd:map-codebase` then `/gsd:new-project` for brownfield). The template no longer ships TODO.md / DEFERRED.md — planning is GSD's job. |
 | `CHANGELOG.md` | **Ask** | Only if the project does not already have one. |
 | `RELEASE.md` | **Ask** | Only if the user wants release automation. |
 | `.github/workflows/release.yml.template` | **Copy as `.template`** | Do NOT activate without asking. |
@@ -74,7 +73,7 @@ Show the user the diff before writing.
 
 ## 4. Merging `CLAUDE.md`
 
-If the target has no `CLAUDE.md`, copy ours and then run `/setup` (section 8).
+If the target has no `CLAUDE.md`, copy ours and then run `/gtr:setup` (section 8).
 
 If one exists, do NOT overwrite. Instead, offer to add only the sections that are missing:
 
@@ -129,14 +128,14 @@ Do NOT push. Let the user review and push themselves.
 
 ---
 
-## 8. Run `/setup`
+## 8. Run `/gtr:setup`
 
 Tell the user:
 
-> I have merged the template. Run `/setup` now to let me detect your stack
+> I have merged the template. Run `/gtr:setup` now to let me detect your stack
 > and fill in `CLAUDE.md` / `PROJECT.yaml`.
 
-`/setup` is idempotent. It will not re-do anything that is already filled in.
+`/gtr:setup` is idempotent. It will not re-do anything that is already filled in.
 
 ---
 
@@ -148,7 +147,7 @@ Remove `/tmp/ccp-template` only after the user confirms everything looks right.
 
 ## Non-goals
 
-- Do NOT install plugins silently — `/setup` will ask.
+- Do NOT install plugins silently — `/gtr:setup` will ask.
 - Do NOT rewrite the user's existing CI or release workflows.
 - Do NOT change the user's commit message style or branch strategy unless asked.
 - Do NOT delete anything the user had before.

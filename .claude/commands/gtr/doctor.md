@@ -1,5 +1,5 @@
 ---
-description: "[TEMPLATE] Health check the template state: setup marker, plugins, CLAUDE.md placeholders, TODO.md, hooks, secret leakage."
+description: "[TEMPLATE] Health check the template state: setup marker, plugins, CLAUDE.md placeholders, planning state (GSD), hooks, secret leakage."
 ---
 
 Read-only diagnosis of the template's state in this project. Do NOT fix anything without asking. Print results grouped under the headings below.
@@ -10,7 +10,7 @@ Read-only diagnosis of the template's state in this project. Do NOT fix anything
 
 - Does `.claude/.setup-complete` exist?
 - If yes → parse and print `date`, `stack`, `type`.
-- If no → state: `Not set up. Run /setup.`
+- If no → state: `Not set up. Run /gtr:setup.`
 
 ---
 
@@ -44,12 +44,18 @@ Report each mismatch as: `drift: <path> has <value>, expected <PROJECT.yaml valu
 
 ---
 
-## 4. `TODO.md`
+## 4. Planning state (`.planning/`)
 
-- Count Active, Blocked, Done entries.
-- For each Blocked task, parse the `(YYYY-MM-DD)` from its block line. If older than 14 days, list it as potentially stale.
+If `.planning/` exists, this project uses GSD:
+- Print current milestone and phase from `.planning/STATE.md`.
+- Print phase counts from `.planning/ROADMAP.md`: completed / in-progress / pending.
+- If `.planning/ISSUES.md` exists, count open vs closed entries.
+- If a phase has been in-progress for more than 14 days (compare timestamps in STATE.md), flag it as potentially stalled.
 
----
+If `.planning/` does NOT exist, print one line: `No GSD planning artifacts found. Run /gsd:new-project to start, or skip if you do not want phase-based planning.`
+
+No `TODO.md` / `DEFERRED.md` checks — those files were dropped in v0.2.0.
+
 
 ## 5. Installed plugins
 
@@ -106,7 +112,7 @@ Report only file paths and line numbers — **never print the secret itself**.
 
 - If `.claude/VERSION` exists, print its content.
 - Run `gh release list --repo GTRows/claude-code-template --limit 1 --json tagName --jq '.[0].tagName'` (or `git ls-remote --tags` fallback) to fetch the upstream latest tag.
-- If the upstream tag is newer, print: `template update available: vX → vY (run /update)`.
+- If the upstream tag is newer, print: `template update available: vX → vY (run /gtr:update)`.
 - If `gh` and network are unavailable, print: `cannot reach upstream — skipped version drift check`.
 
 ## 9. Template manifest drift
@@ -115,8 +121,8 @@ Report only file paths and line numbers — **never print the secret itself**.
   ```bash
   python .claude/scripts/manifest.py --check
   ```
-- Report the list of paths the user has modified relative to the recorded manifest. This is informational only — modifications are normal. Useful before running `/update` so the user knows which files will hit the conflict path.
-- If the manifest is missing, suggest running `/update` (which will regenerate it) or `python .claude/scripts/manifest.py --write` to seed it.
+- Report the list of paths the user has modified relative to the recorded manifest. This is informational only — modifications are normal. Useful before running `/gtr:update` so the user knows which files will hit the conflict path.
+- If the manifest is missing, suggest running `/gtr:update` (which will regenerate it) or `python .claude/scripts/manifest.py --write` to seed it.
 
 ---
 

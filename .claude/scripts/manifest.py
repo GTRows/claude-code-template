@@ -24,6 +24,7 @@ from pathlib import Path
 # Paths under PROJECT_ROOT that the template owns. Glob-aware via Path.rglob.
 TEMPLATE_PATHS = [
     ".claude/commands/*.md",
+    ".claude/commands/gtr/*.md",
     ".claude/hooks/*.py",
     ".claude/hooks/optional/*.py",
     ".claude/scripts/*.py",
