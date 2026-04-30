@@ -62,3 +62,6 @@ htmlcov/
 
 # Token usage telemetry (per-clone, never shipped)
 .claude/usage-log.jsonl
+
+# Hook block audit (per-clone, never shipped)
+.claude/hook-audit.log

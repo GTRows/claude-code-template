@@ -17,6 +17,15 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ### Fixed
 ### Security
 
+## [0.4.0] - 2026-04-30
+
+### Added
+- `.claude/hooks/_audit.py`: shared append-only audit logger. Every guard hook (`pre_guard_release_files`, `pre_guard_security`, `pre_guard_env_secrets`) now records each block to `.claude/hook-audit.log` (gitignored). Schema: ts, hook, action, file_path, reason. 5 audit tests cover unit + end-to-end paths.
+- `/gtr:doctor` section 12 reads the audit log over the last 7 days and flags hooks that fire more than 50 times (likely misconfigured pattern).
+- `/gtr:new-skill`: scaffolds a project-specific skill under `.claude/skills/<slug>/SKILL.md` with trigger-condition guidance and anti-patterns. Discourages duplicating plugin functionality.
+- `/gtr:new-rule`: scaffolds a path-scoped CLAUDE.md rule under `.claude/rules/<slug>.md` with a `paths:` glob frontmatter so rules only load when relevant files are touched.
+- `/gtr:help` table of contents updated with the new commands.
+
 ## [0.3.0] - 2026-04-30
 
 ### Added

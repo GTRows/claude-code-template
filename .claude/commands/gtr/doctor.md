@@ -152,6 +152,23 @@ If the heaviest single session is more than 5x the average, flag: "One session b
 
 If the file does not exist, print: `no usage log yet (the SessionEnd hook records each session's tokens)`.
 
+## 12. Hook block audit (last 7 days)
+
+If `.claude/hook-audit.log` exists, read the last 7 days of records and print:
+
+```
+total blocks (last 7 days):  <N>
+by hook:
+  pre_guard_release_files:   <count>
+  pre_guard_security:        <count>
+  pre_guard_env_secrets:     <count>
+top blocked path:            <path>  (<count> blocks)
+```
+
+If a single hook fired more than 50 times in 7 days, flag: "Hook <name> is blocking unusually often — check its CONFIGURATION block; pattern may be too aggressive for this project."
+
+If the file does not exist, print: `no hook block audit yet (every guard-hook block is recorded)`.
+
 ---
 
 ## Summary

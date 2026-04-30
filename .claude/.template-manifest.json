@@ -1,12 +1,14 @@
 {
   "files": {
     ".claude/TIPS.md": "51d87382e2f0e05eec6ce5c1d8b8bb6ee1ee21fea79503023ac63c87039c2e9e",
-    ".claude/VERSION": "c3e6947edad6581d229209ce319ce4498a03f3ed0846b74bb647247a749c1e46",
-    ".claude/commands/gtr/doctor.md": "d0fe843b092745eefce782a313d56c8a18bf556c3831c43e85b3d94461c8b9e2",
-    ".claude/commands/gtr/help.md": "e36a40fb7cf8cc498ff592df4539232cd9f10039934cc9bf5b661ab8538e4aa0",
+    ".claude/VERSION": "be36d0066e8b6749a88a1c6bf1ce96482157ec618cb7f2aab162d3efae41f4d9",
+    ".claude/commands/gtr/doctor.md": "de6eaf7e384d9a48d5e9ad1bd883b7eb8f4a7b837ffbe41c9d079c0959b6cd85",
+    ".claude/commands/gtr/help.md": "6ddcae149f2cd540cd6512fbe4ceb1ddf50df28179fd7277a7885649e7802874",
     ".claude/commands/gtr/menu.md": "ae318e6039de4e3509371104e2f931c2f3fc2301347caeae45787f3666474a97",
     ".claude/commands/gtr/new-adr.md": "3c74a99216e4bc02c79afa64635046f63f7d320dd2eef8ce4b8ce81fb12d0fee",
     ".claude/commands/gtr/new-migration.md": "f8150819e1bee1c96b2476ec8947f93020f068d78b63af6fd895797bda4d9b97",
+    ".claude/commands/gtr/new-rule.md": "e3faf501d2e1ff9d1863fe605cd2a9073fda9264a9a19a2d744fa9267c9e3e91",
+    ".claude/commands/gtr/new-skill.md": "20bd534840f281f50a95df55043d7599cc3693d066cca2dec7d2c7579b27d8a1",
     ".claude/commands/gtr/onboard.md": "490d7ffffa744e9eec48de897590b5409cc609329bcc283c0f8448c13723c204",
     ".claude/commands/gtr/release.md": "d787739817a55cdb9e5d2d2dbc5f117f9b230a1ab11c92953d1ab067ec624492",
     ".claude/commands/gtr/setup.md": "133bd597d0a99962eb7fd6bd1dfe355e77c1d343a285ebc81aeed2f3e7cbe948",
@@ -20,12 +22,13 @@
     ".claude/docs/releases.md": "5d35df23e2cfbba0eabe1e01e1e6ccf41ef7d7b34f871fd441389ac570023a3c",
     ".claude/docs/setup-flow.md": "c708b7ffa1033f70d69ec50f4833031bd90b56f4470a1f487c292f9bc8c13018",
     ".claude/docs/workflow.md": "3c129a8341c99067a6669ee14b5afe69522547055aa81000fc5649927cac0e19",
+    ".claude/hooks/_audit.py": "ea1b470f2e3a772142603e51be4f07bdb28d2ebbf5c77d9524d7a8026cb23f7e",
     ".claude/hooks/optional/pre_warn_win32_danger.py": "80b21144d38599cacf8b9b1fd9d41eae952b0ea60300baa37aac8a05feafd62d",
     ".claude/hooks/post_validate_syntax.py": "b1b9edf4b5cb9c051621e2f0d8404ba24e8a9d66b57ebc86c860cb7b17ef9e62",
     ".claude/hooks/pre_check_setup.py": "7ca18f15ad5473dc259c46297a0dc05a084aab3d5d8992cbe293a8bfacd75da2",
-    ".claude/hooks/pre_guard_env_secrets.py": "2029085f23b17822cef91779c7148d8ea5439367e1fb36e29311b2979a5953c5",
-    ".claude/hooks/pre_guard_release_files.py": "bc0f48ecc7c7e9272fa7077a1dccc2c24ab5f217d4768f7ed5691ca850ddc021",
-    ".claude/hooks/pre_guard_security.py": "b245872e5392bf7d8a6357c3cf4d990b8ff2f09435eda63e40fe7be16cdcef45",
+    ".claude/hooks/pre_guard_env_secrets.py": "6033ca05c43cbbea1be76ff063b0a182a59bf6d34491c7973e35e0b6e10dc77a",
+    ".claude/hooks/pre_guard_release_files.py": "3cd69a5329befb553fa79e339e6473b563c45d4d3d5af874fab87ad4a8ecc9bf",
+    ".claude/hooks/pre_guard_security.py": "927cfd4686bfdae84ab9e6f4db4371f6d7850b971f2161aa39a3ea2a60f71d67",
     ".claude/hooks/session_check_setup.py": "9fc370eb91ddad0958b9569a3c8e63e1c9f3a15ada415dbbc7c7ffe2a27c50a3",
     ".claude/hooks/session_log_usage.py": "98b98d2ee45b00eff7142d38dcb8f36d8700d794d3018301b261b54603ca6bcf",
     ".claude/scripts/manifest.py": "a1dccca20bc26cdcf4eb5bde178570317625af68bae4870688ee02b969902150",
@@ -39,10 +42,10 @@
     ".github/PULL_REQUEST_TEMPLATE.md": "5e768a581749c63c97b2cfdf39fd39643f93659349bc2de5c0a6475371691078",
     ".github/workflows/ci.yml.template": "7d889cab19a9d023186a4572e1bc80466bcb61e1dec28d4c7cc4af264c5ac0fe",
     ".github/workflows/release.yml.template": "3b5df00e3154e4e2eacccc96500978a36fd8d2241534a52effb1f159ad7fce4b",
-    ".gitignore": "6b4aae07137f921b3690df2a5e0971a765bc50fb85b7f667db313f19819a899f",
+    ".gitignore": "155fbebc27855ccfa19aa3f2892b22991364e139fedace61c16f22ff3fc74201",
     "CLAUDE.md": "8030c12efaab1080fc80a10731f5491b2e54893730d19a051e1b15a7ac3e00e1",
     "IMPLEMENT.md": "3bc658ae7dee8b928280d14fa2e1c1afc4bbe22dfab053412b0e4546e65ed3f1",
     "RELEASE.md": "ec9d1dece9e08205406b7edda5be04f5b048ed53286c8cafdc251ede3620c4c9"
   },
-  "version": "0.3.0"
+  "version": "0.4.0"
 }

@@ -56,6 +56,17 @@ CODE_EXTENSIONS = {".js", ".mjs", ".jsx", ".ts", ".tsx", ".vue", ".svelte", ".py
 # -----------------------------------
 
 
+
+# --- audit ---
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+try:
+    from _audit import record_block as _record_block
+except Exception:
+    def _record_block(*_args, **_kwargs):
+        pass
+# --- end audit ---
+
 def main() -> None:
     try:
         data = json.load(sys.stdin)
@@ -82,6 +93,7 @@ def main() -> None:
             + "\nFix the security issue before proceeding.",
             file=sys.stderr,
         )
+        _record_block("pre_guard_security", file_path=file_path, reason="; ".join(w.strip() for w in warnings))
         sys.exit(2)
 
 

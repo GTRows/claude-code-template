@@ -35,6 +35,8 @@ GTR COMMANDS — template lifecycle
   /gtr:release           Bump, rotate CHANGELOG, commit, tag
   /gtr:new-migration     Scaffold a DB migration
   /gtr:new-adr           Scaffold an Architecture Decision Record under docs/adr/
+  /gtr:new-skill         Scaffold a project-specific skill under .claude/skills/
+  /gtr:new-rule          Scaffold a path-scoped rule under .claude/rules/
   /gtr:help              This help
 
 GSD COMMANDS — planning and execution

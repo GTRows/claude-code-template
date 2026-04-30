@@ -68,6 +68,17 @@ CODE_EXTENSIONS = {
 # -----------------------------------
 
 
+
+# --- audit ---
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+try:
+    from _audit import record_block as _record_block
+except Exception:
+    def _record_block(*_args, **_kwargs):
+        pass
+# --- end audit ---
+
 def main() -> None:
     try:
         data = json.load(sys.stdin)
@@ -90,6 +101,7 @@ def main() -> None:
             "Advise the user to manage secrets manually.",
             file=sys.stderr,
         )
+        _record_block("pre_guard_env_secrets", file_path=file_path, reason=f"secrets/env file: {name}")
         sys.exit(2)
 
     ext = os.path.splitext(file_path)[1].lower()
