@@ -1,12 +1,12 @@
 {
   "files": {
     ".claude/TIPS.md": "51d87382e2f0e05eec6ce5c1d8b8bb6ee1ee21fea79503023ac63c87039c2e9e",
-    ".claude/VERSION": "c58a749f70f5e1ba5394ebcdbfcfa02fa938c4a173d8e41e6c476a7c8b2acddd",
+    ".claude/VERSION": "c3e6947edad6581d229209ce319ce4498a03f3ed0846b74bb647247a749c1e46",
     ".claude/commands/gtr/doctor.md": "d0fe843b092745eefce782a313d56c8a18bf556c3831c43e85b3d94461c8b9e2",
     ".claude/commands/gtr/help.md": "e36a40fb7cf8cc498ff592df4539232cd9f10039934cc9bf5b661ab8538e4aa0",
     ".claude/commands/gtr/menu.md": "ae318e6039de4e3509371104e2f931c2f3fc2301347caeae45787f3666474a97",
     ".claude/commands/gtr/new-adr.md": "3c74a99216e4bc02c79afa64635046f63f7d320dd2eef8ce4b8ce81fb12d0fee",
-    ".claude/commands/gtr/new-migration.md": "83ea52e561a7633c95b997cb4b3884a958a386d310b18404b0e121d064687250",
+    ".claude/commands/gtr/new-migration.md": "f8150819e1bee1c96b2476ec8947f93020f068d78b63af6fd895797bda4d9b97",
     ".claude/commands/gtr/onboard.md": "490d7ffffa744e9eec48de897590b5409cc609329bcc283c0f8448c13723c204",
     ".claude/commands/gtr/release.md": "d787739817a55cdb9e5d2d2dbc5f117f9b230a1ab11c92953d1ab067ec624492",
     ".claude/commands/gtr/setup.md": "133bd597d0a99962eb7fd6bd1dfe355e77c1d343a285ebc81aeed2f3e7cbe948",
@@ -44,5 +44,5 @@
     "IMPLEMENT.md": "3bc658ae7dee8b928280d14fa2e1c1afc4bbe22dfab053412b0e4546e65ed3f1",
     "RELEASE.md": "ec9d1dece9e08205406b7edda5be04f5b048ed53286c8cafdc251ede3620c4c9"
   },
-  "version": "0.2.0"
+  "version": "0.3.0"
 }

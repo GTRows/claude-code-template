@@ -17,6 +17,17 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ### Fixed
 ### Security
 
+## [0.3.0] - 2026-04-30
+
+### Added
+- `/gtr:new-adr` command. Scaffolds sequentially-numbered Architecture Decision Records under `docs/adr/` with a structured template (Status / Context / Decision / Consequences / Alternatives / References) and lifecycle conventions.
+- `.claude/docs/` directory with per-topic reference files (hooks, mcp, commands, permissions, releases, setup-flow, deferred-work, claude-md-best-practices, workflow). `.claude/TIPS.md` is now a thin index.
+- `/gtr:new-migration` rewritten with explicit per-tool detection: Alembic, Django, Prisma, Knex, TypeORM, sqlx, diesel, Flyway, goose / atlas / sql-migrate. Prefers the tool's own scaffolder, falls back to hand-writing only when no generator exists. Documents rollback paths for destructive changes.
+- Manifest now tracks `.claude/docs/*.md` and `.claude/scripts/migrations/*.py`.
+
+### Changed
+- TIPS.md split into focused topic files; entry points stay the same (`/gtr:help <topic>` or browse `.claude/docs/`).
+
 ## [0.2.0] - 2026-04-30
 
 ### Added
