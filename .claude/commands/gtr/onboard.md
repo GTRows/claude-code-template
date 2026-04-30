@@ -21,7 +21,7 @@ I will:
   1. Clone the latest template tag to a temp dir.
   2. Walk through file-by-file decisions (hooks, commands, settings, docs).
   3. Apply only what you approve.
-  4. Run /gtr:setup at the end to fill CLAUDE.md and PROJECT.yaml.
+  4. Run /gtr:setup at the end to fill CLAUDE.md and IDENTITY.yaml.
 
 Proceed? (yes / no)
 ```
@@ -84,7 +84,7 @@ Ask `add / skip / customize` per section.
 
 ### 2f. Root-level files
 
-For each of `PROJECT.yaml`, `IMPLEMENT.md`, `RELEASE.md`, `CHANGELOG.md`:
+For each of `IDENTITY.yaml`, `IMPLEMENT.md`, `RELEASE.md`, `CHANGELOG.md`:
 - If missing, ask: `add <file>? (yes / no)`. If yes, copy from template.
 - If present, leave alone.
 
@@ -136,7 +136,7 @@ Tell the user:
 ```
 Template onboarded at ${TEMPLATE_TAG}.
 
-Next: run /gtr:setup to fill in CLAUDE.md / PROJECT.yaml from your project's
+Next: run /gtr:setup to fill in CLAUDE.md / IDENTITY.yaml from your project's
 detected stack, install plugins, and complete first-time configuration.
 ```
 

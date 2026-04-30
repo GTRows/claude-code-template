@@ -26,21 +26,21 @@ Report each remaining placeholder as an unresolved item.
 
 ---
 
-## 3. Identity drift (`PROJECT.yaml` is source of truth)
+## 3. Identity drift (`IDENTITY.yaml` is source of truth)
 
-If `PROJECT.yaml` exists, verify no drift against derived files:
+If `IDENTITY.yaml` exists, verify no drift against derived files:
 
 | Source of truth | Must match |
 |-----------------|-----------|
-| `PROJECT.yaml#identity.name` | `package.json#name`, `pyproject.toml#project.name`, `Cargo.toml#package.name` |
-| `PROJECT.yaml#version` | `package.json#version`, `pyproject.toml` version, `Cargo.toml` version |
-| `PROJECT.yaml#version` | Top version header in `CHANGELOG.md` (first `## [x.y.z]` after `## [Unreleased]`) |
-| `PROJECT.yaml#identity.icon` | Path exists on disk |
-| `PROJECT.yaml#release.platforms` | Matrix entries in `.github/workflows/release.yml` (if workflow exists) |
+| `IDENTITY.yaml#identity.name` | `package.json#name`, `pyproject.toml#project.name`, `Cargo.toml#package.name` |
+| `IDENTITY.yaml#version` | `package.json#version`, `pyproject.toml` version, `Cargo.toml` version |
+| `IDENTITY.yaml#version` | Top version header in `CHANGELOG.md` (first `## [x.y.z]` after `## [Unreleased]`) |
+| `IDENTITY.yaml#identity.icon` | Path exists on disk |
+| `IDENTITY.yaml#release.platforms` | Matrix entries in `.github/workflows/release.yml` (if workflow exists) |
 
 Also verify `## [Unreleased]` section exists in `CHANGELOG.md`.
 
-Report each mismatch as: `drift: <path> has <value>, expected <PROJECT.yaml value>`. Do NOT auto-fix.
+Report each mismatch as: `drift: <path> has <value>, expected <IDENTITY.yaml value>`. Do NOT auto-fix.
 
 ---
 

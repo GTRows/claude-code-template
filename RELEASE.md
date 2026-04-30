@@ -1,6 +1,6 @@
 # Release Runbook
 
-Source of truth for identity and release config: `PROJECT.yaml`.
+Source of truth for identity and release config: `IDENTITY.yaml`.
 Automation: `.github/workflows/release.yml`.
 Notes source: `CHANGELOG.md`.
 
@@ -10,12 +10,12 @@ Notes source: `CHANGELOG.md`.
 - Breaking change → bump `MAJOR`.
 - New feature, no break → bump `MINOR`.
 - Bugfix only → bump `PATCH`.
-- Pre-release → append `-<tag>.<n>` (e.g. `1.2.0-rc.1`). Allowed tags come from `PROJECT.yaml#release.prerelease_tags`.
+- Pre-release → append `-<tag>.<n>` (e.g. `1.2.0-rc.1`). Allowed tags come from `IDENTITY.yaml#release.prerelease_tags`.
 - Git tag format: `v<version>` (e.g. `v1.2.0`). No other prefixes.
 
 ## Artifact naming contract
 
-Defined by `PROJECT.yaml#release.artifact_pattern`. Default:
+Defined by `IDENTITY.yaml#release.artifact_pattern`. Default:
 ```
 {name}-v{version}-{platform}.{ext}
 ```
@@ -31,8 +31,8 @@ Before cutting a release:
 
 - [ ] All GSD plans included in this version are complete (`/gsd:progress` shows them done).
 - [ ] `CHANGELOG.md` has an `## [Unreleased]` section with the actual changes — no stubs.
-- [ ] `PROJECT.yaml#version` matches the target version.
-- [ ] Derived manifests (`package.json`, `pyproject.toml`, `Cargo.toml`, etc.) match `PROJECT.yaml#version`. Run `/gtr:doctor` to verify.
+- [ ] `IDENTITY.yaml#version` matches the target version.
+- [ ] Derived manifests (`package.json`, `pyproject.toml`, `Cargo.toml`, etc.) match `IDENTITY.yaml#version`. Run `/gtr:doctor` to verify.
 - [ ] CI on `main` is green.
 - [ ] Screenshots for any visual changes saved under `assets/release/v<version>/`.
 
@@ -40,7 +40,7 @@ Before cutting a release:
 
 Use `/gtr:release` to do steps 1–4 mechanically, or do them by hand:
 
-1. Bump `PROJECT.yaml#version` to the new version.
+1. Bump `IDENTITY.yaml#version` to the new version.
 2. In `CHANGELOG.md`, rename `## [Unreleased]` to `## [x.y.z] - YYYY-MM-DD`. Open a fresh `## [Unreleased]` above it with empty sections.
 3. Update derived manifests to match.
 4. Commit: `chore(release): v<version>`.
@@ -53,7 +53,7 @@ The tag push triggers `.github/workflows/release.yml`.
 
 On tag push matching `v*.*.*`:
 1. Tests run first. Release aborts on failure.
-2. Build matrix runs for each platform in `PROJECT.yaml#release.platforms`.
+2. Build matrix runs for each platform in `IDENTITY.yaml#release.platforms`.
 3. Artifacts collected into `dist/`. `SHA256SUMS.<platform>` generated per job.
 4. Release notes extracted from the `## [x.y.z]` section of `CHANGELOG.md`.
 5. A **draft** GitHub Release is created with all artifacts and notes attached.

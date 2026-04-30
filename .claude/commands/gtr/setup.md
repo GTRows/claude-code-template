@@ -38,9 +38,9 @@ Summarize detection in one short paragraph. **Confirm with the user** before pro
 
 ---
 
-## 3. Fill `PROJECT.yaml` (single source of truth)
+## 3. Fill `IDENTITY.yaml` (single source of truth)
 
-`PROJECT.yaml` at repo root is the canonical identity and release config. Every other manifest derives from it.
+`IDENTITY.yaml` at repo root is the canonical identity and release config. Every other manifest derives from it.
 
 If missing, copy the template skeleton. Then fill:
 
@@ -55,13 +55,13 @@ If missing, copy the template skeleton. Then fill:
 | `version` | Highest of `package.json#version` / `pyproject.toml` / `Cargo.toml`. Default `0.1.0`. Flag drift. |
 | `release.platforms` | Infer from stack (Electron → windows+macos; CLI binary → windows-x64+linux-x64+macos-arm64; web-only → empty). |
 
-If any derived manifest disagrees with `PROJECT.yaml#version` after filling, sync it to `PROJECT.yaml`'s value and add a line to `.claude/setup-followups.md` to verify downstream.
+If any derived manifest disagrees with `IDENTITY.yaml#version` after filling, sync it to `IDENTITY.yaml`'s value and add a line to `.claude/setup-followups.md` to verify downstream.
 
 ---
 
 ## 4. Fill `CLAUDE.md`
 
-Replace placeholder blocks using values from `PROJECT.yaml`:
+Replace placeholder blocks using values from `IDENTITY.yaml`:
 
 - `PROJECT_NAME` → `identity.name`
 - `Description` → `identity.description`
@@ -190,7 +190,7 @@ Users running Claude Code with `--dangerously-skip-permissions` get silent insta
 Ask exactly:
 
 > Do you want to use **GSD** for planning and execution? (recommended)
-> - **yes**   → I will run `/gsd:new-project` next (and `/gsd:map-codebase` first if this is an existing codebase). The brief is auto-filled from `PROJECT.yaml` / `CLAUDE.md` / `README.md`; you only confirm or tweak.
+> - **yes**   → I will run `/gsd:new-project` next (and `/gsd:map-codebase` first if this is an existing codebase). The brief is auto-filled from `IDENTITY.yaml` / `CLAUDE.md` / `README.md`; you only confirm or tweak.
 > - **no**    → skip planning. Template still works for hooks, releases, onboarding, doctor.
 > - **later** → captured in `.claude/setup-followups.md` (gitignored). `/gtr:doctor` surfaces it.
 
@@ -228,7 +228,7 @@ Ask:
   2. If `RELEASE.md` is missing at repo root, copy the template skeleton.
   3. If `.github/workflows/release.yml` is missing and `release.yml.template` exists, copy template → `release.yml`. Do NOT delete the `.template`.
   4. Tell the user which `REPLACE` markers to customise (test command, per-platform build command).
-  5. Reconcile `PROJECT.yaml#release.platforms` with the workflow matrix. Ask which platforms to enable; prune the rest from both files.
+  5. Reconcile `IDENTITY.yaml#release.platforms` with the workflow matrix. Ask which platforms to enable; prune the rest from both files.
   6. Add `release-verify` follow-up to `.claude/setup-followups.md`: "dry-run a pre-release tag (e.g. `v0.0.1-rc.1`) and confirm the draft release appears on GitHub".
 
 ---
@@ -249,8 +249,8 @@ Ask the user once, listing every option:
 
 For each picked option:
 
-- `LICENSE` → write the MIT text with `<year>` / `<owner>` filled in. Update `PROJECT.yaml#identity.license` to `MIT`.
-- `SECURITY.md` → minimal disclosure policy (email contact, expected response time, supported versions table — fill from `PROJECT.yaml`).
+- `LICENSE` → write the MIT text with `<year>` / `<owner>` filled in. Update `IDENTITY.yaml#identity.license` to `MIT`.
+- `SECURITY.md` → minimal disclosure policy (email contact, expected response time, supported versions table — fill from `IDENTITY.yaml`).
 - `CONTRIBUTING.md` → derive from this CLAUDE.md's `Git and Commits`, `Code Standards`, `File Organization` sections.
 - `.github/CODEOWNERS` → ask for the user's GitHub handle, default `* @<handle>`.
 - `.github/dependabot.yml` → infer ecosystem from detection in step 2 (npm, pip, cargo, gomod, ...).

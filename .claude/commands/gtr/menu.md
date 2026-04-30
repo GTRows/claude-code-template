@@ -8,7 +8,7 @@ You are the **template menu**. Job: ask the user what they want, route to the ri
 
 1. **Detect state in parallel:**
    - `.claude/.setup-complete` exists?
-   - `PROJECT.yaml` (or `IDENTITY.yaml`) exists?
+   - `IDENTITY.yaml` (or legacy `PROJECT.yaml`) exists?
    - `.planning/` directory exists?
    - `.planning/STATE.md` exists?
 2. **Adapt the menu:**

@@ -24,7 +24,7 @@ claude
 /gtr:setup
 ```
 
-`/gtr:setup` detects the stack, fills `CLAUDE.md`, writes `PROJECT.yaml`, installs recommended plugins, and sets up task tracking. Idempotent — safe to re-run.
+`/gtr:setup` detects the stack, fills `CLAUDE.md`, writes `IDENTITY.yaml`, installs recommended plugins, and sets up task tracking. Idempotent — safe to re-run.
 
 ### B. Implement into an existing project
 
@@ -50,7 +50,7 @@ Two options:
 | `/gtr:setup` | First-time project wizard. Asks conversation language + i18n, fills CLAUDE.md, installs plugins, scaffolds task files, writes the template manifest. |
 | `/gtr:update` | Pull template updates from upstream and merge non-destructively (uses sha-keyed manifest to detect user modifications). |
 | `/gtr:doctor` | Read-only health check: setup marker, plugin status, CLAUDE.md placeholders, identity drift, secrets, template version drift, manifest drift. |
-| `/gtr:release <ver>` | Prepare a release: bump PROJECT.yaml, rotate CHANGELOG, sync manifests, commit, tag. Never pushes. |
+| `/gtr:release <ver>` | Prepare a release: bump IDENTITY.yaml, rotate CHANGELOG, sync manifests, commit, tag. Never pushes. |
 | `/gtr:help` | Discovery: list every template command, hook, and file. |
 | `/gtr:new-migration` | Scaffold a DB migration following detected conventions. |
 
@@ -58,7 +58,7 @@ Two options:
 
 | Hook | Event | Behavior |
 |------|-------|----------|
-| `pre_guard_release_files.py` | PreToolUse Write/Edit | Blocks edits to protected files (PROJECT.yaml, package.json, CHANGELOG.md, CI configs, lockfiles, ...) |
+| `pre_guard_release_files.py` | PreToolUse Write/Edit | Blocks edits to protected files (IDENTITY.yaml, package.json, CHANGELOG.md, CI configs, lockfiles, ...) |
 | `pre_guard_security.py` | PreToolUse Write/Edit | Blocks dangerous patterns (innerHTML, eval, `shell=True`, SQL injection, ...) |
 | `pre_guard_env_secrets.py` | PreToolUse Write/Edit | Blocks hardcoded secrets and writes to `.env*` files |
 | `post_validate_syntax.py` | PostToolUse Write/Edit | Validates Python / JS / JSON syntax after writes |
@@ -77,7 +77,7 @@ Three layers:
 
 | File | Role |
 |------|------|
-| `PROJECT.yaml` | Single source of truth for name, display_name, version, icon, license, release config. Every derived manifest follows it. |
+| `IDENTITY.yaml` | Single source of truth for name, display_name, version, icon, license, release config. Every derived manifest follows it. |
 | `CHANGELOG.md` | Keep-a-Changelog format. Release notes extracted from `## [x.y.z]` section matching the pushed tag. |
 | `RELEASE.md` | End-to-end runbook: preflight, cut, post-release, rollback, versioning rules. |
 | `.github/workflows/release.yml.template` | Tag-triggered, test-gated, matrix build, checksum, draft-first GitHub Release. Activated by `/gtr:setup` on opt-in. |
@@ -114,7 +114,7 @@ Plugins live in user scope, so one install covers every project.
 
 ## Philosophy
 
-- **Single source of truth.** Identity lives in `PROJECT.yaml`. Everything else derives. `/gtr:doctor` reports drift.
+- **Single source of truth.** Identity lives in `IDENTITY.yaml`. Everything else derives. `/gtr:doctor` reports drift.
 - **Hooks over vibes.** Guardrails are enforced by scripts, not reminders. You cannot accidentally commit an `.env` or force-push main.
 - **Opt-in over magic.** Release automation and optional hooks are copied on opt-in during `/gtr:setup`, not imposed.
 - **Planning lives on disk, not in chat.** Phase plans live under `.planning/` (managed by GSD). Each plan executes in an isolated subagent so the main context stays light.
@@ -127,11 +127,11 @@ Plugins live in user scope, so one install covers every project.
 
 After `/gtr:setup`:
 
-- **Identity**: edit `PROJECT.yaml`. Run `/gtr:doctor` to catch drift in derived manifests.
+- **Identity**: edit `IDENTITY.yaml`. Run `/gtr:doctor` to catch drift in derived manifests.
 - **Protected files**: adjust `PROTECTED_EXACT` / `PROTECTED_DIRS` in `.claude/hooks/pre_guard_release_files.py`.
 - **Security patterns**: extend `DANGEROUS_PATTERNS` in `.claude/hooks/pre_guard_security.py` for project-specific sinks.
 - **Secret patterns**: extend `SECRET_PATTERNS` in `.claude/hooks/pre_guard_env_secrets.py` for vendor token formats.
-- **Release platforms**: edit `PROJECT.yaml#release.platforms` and the matrix in `.github/workflows/release.yml`.
+- **Release platforms**: edit `IDENTITY.yaml#release.platforms` and the matrix in `.github/workflows/release.yml`.
 - **Permissions**: project-wide rules in `.claude/settings.json`; personal allowlists in `.claude/settings.local.json`.
 
 See `.claude/TIPS.md` for the long-form reference (hooks API, MCP servers, permissions, workflow tips).

@@ -59,6 +59,31 @@ The project keeps a manifest at `.claude/.template-manifest.json`. Format:
 
 **If the manifest is present**, continue without asking.
 
+## Step 2.5 — Run schema migrations (BEFORE fetching upstream)
+
+For breaking changes between the project's current `.claude/VERSION` and the
+upstream version, the template ships per-version migration scripts under
+`.claude/scripts/migrations/`. They handle reshapes that a sha-based file
+diff cannot — directory renames, dropped files, identity rename, etc.
+
+1. **Preview** what will run:
+   ```bash
+   python .claude/scripts/migrations.py --target <upstream-version> --check
+   ```
+2. If the output is "no migrations to run", continue to step 3.
+3. Otherwise show the user the action list and ask: `Apply <N> migration(s)? (yes / no)`.
+4. On `yes`:
+   ```bash
+   python .claude/scripts/migrations.py --target <upstream-version>
+   ```
+   The runner snapshots `.claude/commands/` to `.claude/commands.pre-vX.Y.Z/`
+   before reshaping and bumps `.claude/VERSION` after each migration.
+5. If the runner reports any `note` actions (manual review needed),
+   surface them to the user before continuing.
+6. Re-run `python .claude/scripts/manifest.py --write` so the manifest
+   reflects the post-migration filenames. Otherwise step 4 will treat the
+   reshape as user modifications.
+
 ## Step 3 — Fetch upstream
 
 Clone the upstream tag into a temp dir:
@@ -87,7 +112,8 @@ For each path that exists in upstream **and** is template-owned (see exclusion l
 
 ```
 CHANGELOG.md
-PROJECT.yaml          (identity is per-project)
+IDENTITY.yaml         (identity is per-project — was PROJECT.yaml in v0.1.x)
+PROJECT.yaml          (legacy alias; only present pre-v0.2.0)
 README.md             (per-project doc)
 .claude/.setup-complete
 .claude/settings.local.json

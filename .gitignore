@@ -55,3 +55,7 @@ htmlcov/
 
 # OMC (oh-my-claudecode) local session state
 .omc/
+
+# Snapshots taken by /gtr:update before applying breaking migrations
+.claude/commands.pre-*/
+.claude/migration-log.md

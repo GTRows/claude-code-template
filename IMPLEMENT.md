@@ -42,7 +42,7 @@ Read, do NOT blindly copy. Decide per-file whether to merge, skip, or ask.
 | `.claude/TIPS.md` | **Copy** | Reference doc. |
 | `.claude/VERSION` | **Copy** | Template version pin. |
 | `CLAUDE.md` | **Merge carefully** | See section 4. |
-| `PROJECT.yaml` | **Create if missing** | If present, leave it alone. |
+| `IDENTITY.yaml` | **Create if missing** | If present, leave it alone. |
 | `.planning/` | **Defer to GSD** | Do NOT create. After onboarding, suggest `/gsd:new-project` (or `/gsd:map-codebase` then `/gsd:new-project` for brownfield). The template no longer ships TODO.md / DEFERRED.md — planning is GSD's job. |
 | `CHANGELOG.md` | **Ask** | Only if the project does not already have one. |
 | `RELEASE.md` | **Ask** | Only if the user wants release automation. |
@@ -133,7 +133,7 @@ Do NOT push. Let the user review and push themselves.
 Tell the user:
 
 > I have merged the template. Run `/gtr:setup` now to let me detect your stack
-> and fill in `CLAUDE.md` / `PROJECT.yaml`.
+> and fill in `CLAUDE.md` / `IDENTITY.yaml`.
 
 `/gtr:setup` is idempotent. It will not re-do anything that is already filled in.
 

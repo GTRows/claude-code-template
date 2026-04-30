@@ -151,9 +151,9 @@ Surface deferred items with `/gsd:consider-issues`. Do not leave TODO comments i
 
 ## Release
 
-- **Identity**: `PROJECT.yaml` at repo root is the single source of truth for `name`, `display_name`, `version`, `icon`, license, and release config. Every derived manifest (`package.json`, `pyproject.toml`, etc.) follows it.
+- **Identity**: `IDENTITY.yaml` at repo root is the single source of truth for `name`, `display_name`, `version`, `icon`, license, and release config. Every derived manifest (`package.json`, `pyproject.toml`, etc.) follows it.
 - **Changelog**: `CHANGELOG.md` uses the Keep a Changelog format. The release workflow extracts notes from the matching `## [x.y.z]` section.
 - **Runbook**: See `RELEASE.md` for the end-to-end release procedure (preflight, cut, post-release, rollback).
 - **Automation**: `.github/workflows/release.yml` triggers on tag push `v*.*.*`. Release is test-gated, matrix-built per platform, checksum-signed, and draft-first — a maintainer publishes manually.
-- **Version bumps**: Use `/gtr:release <version>` to do the mechanical steps (bump `PROJECT.yaml`, rotate `CHANGELOG.md`, sync derived manifests, commit, tag). Push is always manual.
-- **Identity drift**: If `PROJECT.yaml` disagrees with a derived manifest, `PROJECT.yaml` wins. `/gtr:doctor` reports drift; fix it by updating the derived file, never the other direction.
+- **Version bumps**: Use `/gtr:release <version>` to do the mechanical steps (bump `IDENTITY.yaml`, rotate `CHANGELOG.md`, sync derived manifests, commit, tag). Push is always manual.
+- **Identity drift**: If `IDENTITY.yaml` disagrees with a derived manifest, `IDENTITY.yaml` wins. `/gtr:doctor` reports drift; fix it by updating the derived file, never the other direction.

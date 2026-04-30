@@ -1,4 +1,4 @@
-# PROJECT.yaml
+# IDENTITY.yaml
 #
 # Single source of truth for this project's identity and release config.
 # Every other artifact — package manifests, installer metadata, release
