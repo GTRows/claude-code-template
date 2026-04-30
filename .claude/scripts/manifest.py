@@ -28,6 +28,8 @@ TEMPLATE_PATHS = [
     ".claude/hooks/*.py",
     ".claude/hooks/optional/*.py",
     ".claude/scripts/*.py",
+    ".claude/scripts/migrations/*.py",
+    ".claude/docs/*.md",
     ".claude/TIPS.md",
     ".claude/VERSION",
     ".claude/settings.json",
