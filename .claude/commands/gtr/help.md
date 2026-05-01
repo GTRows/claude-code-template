@@ -66,12 +66,52 @@ GSD COMMANDS — planning and execution
   /gsd:resume-task       Resume an interrupted subagent execution
   /gsd:help              GSD's own command reference
 
+INTENT -> COMMAND (quick map — pick the row that matches what you want to do)
+  "Set up this project for the first time"            /gtr:setup
+  "Read my whole project, summarise structure"        /gsd:map-codebase
+  "Define the project's vision and goals"             /gsd:new-project
+  "Turn the vision into ordered phases (roadmap)"     /gsd:create-roadmap
+  "Walk the roadmap, pick the next phase, plan it"    /gsd:progress  ->  /gsd:plan-phase <N>
+  "Break one phase into 5+ atomic tasks"              /gsd:plan-phase <N>
+  "Run the whole plan, do every task in order"        /gsd:execute-plan <path-to-PLAN.md>
+  "Where am I right now? What is next?"               /gsd:progress
+  "Resume after a break"                              /gsd:resume-work
+  "Stop mid-plan and save context"                    /gsd:pause-work
+  "Append a new phase to the current milestone"       /gsd:add-phase
+  "Squeeze an urgent task between two phases"         /gsd:insert-phase <after-N> "<description>"
+  "Manually test what was just built"                 /gsd:verify-work
+  "Plan fixes from UAT issues"                        /gsd:plan-fix
+  "Mark milestone done and prepare next version"      /gsd:complete-milestone
+  "Health check the template state"                   /gtr:doctor
+  "Cut a release (bump version, tag, etc.)"           /gtr:release <version>
+  "Pull upstream template updates into this project"  /gtr:update
+  "Forgot the command name"                           /gtr:menu  (or  /gtr:help <name>)
+
 Recommended learning path:
   1. /gtr:help workflow      — see how the pieces connect end-to-end
   2. /gtr:help planning      — understand the GSD model in depth
   3. /gtr:help onboarding    — if applying to existing project
   4. /gtr:help release       — when ready to ship
 ```
+
+---
+
+## General workflow (printed alongside the TOC for the no-args case)
+
+Order of operations from empty project to shipped release:
+
+1. **Setup** — `/gtr:setup` (asks language first, fills CLAUDE.md and IDENTITY.yaml, installs plugins, writes `.claude/.setup-complete`).
+2. **Read existing code** (only if brownfield) — `/gsd:map-codebase` produces `.planning/codebase/*.md` so later plans see real architecture.
+3. **Vision** — `/gsd:new-project` writes `.planning/PROJECT.md` (why, constraints, success criteria).
+4. **Roadmap** — `/gsd:create-roadmap` turns the vision into ordered phases in `.planning/ROADMAP.md`.
+5. **Plan one phase** — `/gsd:plan-phase <N>` writes `.planning/phases/<NN>-<name>/<NN>-<P>-PLAN.md` with concrete atomic tasks (this is where one piece of work is split into many tasks).
+6. **Execute** — `/gsd:execute-plan <path>` runs every task in the plan in order, atomic commit per task. This is the "run them sequentially" command.
+7. **Verify** — `/gsd:verify-work` for manual UAT; failed cases feed `/gsd:plan-fix`.
+8. **Loop** — back to step 5 for the next phase. `/gsd:progress` always tells you where you are.
+9. **Release** — `/gtr:doctor` -> `/gtr:release <version>` -> `git push --tags`.
+10. **Maintain** — `/gtr:update` for upstream template changes, `/gtr:doctor` periodically.
+
+If you forget the command name at any point: `/gtr:menu` (interactive) or `/gtr:help <command-or-topic>` (specific lookup). For the deep version of this list, see `Topic: workflow` below.
 
 ---
 

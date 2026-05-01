@@ -17,6 +17,12 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ### Fixed
 ### Security
 
+## [0.6.2] - 2026-05-01
+
+### Added
+- `/gtr:help` no-args output now includes an **INTENT -> COMMAND** quick map at the bottom of the table-of-contents code block. Maps natural-language intents ("break a phase into tasks", "run the plan", "walk the roadmap") to the exact slash command, so users do not have to read the full workflow topic to find the right command.
+- `/gtr:help` no-args output now also prints a **General workflow** section beneath the TOC: a numbered 1-10 list (setup -> map-codebase -> new-project -> create-roadmap -> plan-phase -> execute-plan -> verify -> loop -> release -> maintain). This is the short answer to "how do I actually use this template?" without scrolling for the deep `Topic: workflow` walkthrough.
+
 ## [0.6.1] - 2026-05-01
 
 ### Added
