@@ -17,6 +17,20 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ### Fixed
 ### Security
 
+## [0.6.0] - 2026-05-01
+
+### Added
+- `/gtr:help` new top-level topic: `workflow`. Walks the full lifecycle (setup -> frame project -> plan phase -> execute -> verify -> release -> keep current) with a quick decision tree. Printed automatically when `/gtr:help` is invoked with no arguments, alongside the table of contents.
+- `/gtr:help` `planning` topic now includes concrete greenfield and brownfield walkthroughs, plus an explanation of the three execution strategies auto-selected by `/gsd:execute-plan` (no checkpoints, verify checkpoints, decision checkpoints).
+
+### Changed
+- `/gtr:setup` step ordering: conversation language is now **step 1**, asked before the preflight check and before any other interactive prompt. Once chosen, the language is written to `CLAUDE.md` `## Communication` and bound for every subsequent setup prompt and slash-command output. Steps 2-16 renumbered accordingly. `--extras` mode now reads the existing `## Communication` section to keep the language consistent.
+- `/gtr:help` output language directive: when `CLAUDE.md` `## Communication` is set, all explanatory prose, headings, and bullets render in that language. Command names, file paths, and code blocks stay verbatim. Falls back to the language the user wrote the request in if `## Communication` is missing.
+- `.claude/docs/setup-flow.md` updated to reflect the new step ordering and the language-binding behaviour.
+
+### Removed
+- The hard rule "Help output stays English regardless of conversation language" in `/gtr:help`. Help now follows the configured conversation language.
+
 ## [0.5.0] - 2026-04-30
 
 ### Added

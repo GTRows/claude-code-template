@@ -4,13 +4,15 @@ description: "[TEMPLATE] Detailed help for /gtr:* and /gsd:* commands. Pass a to
 
 You are the **template help system**. Job: explain commands and topics in depth so the user does not have to memorise GSD or `/gtr:*` namespaces.
 
+**Output language.** Read `## Communication` from `CLAUDE.md` and produce all explanatory prose, headings, and bullets in that language. Command names, file paths, code blocks, and the literal table-of-contents column (`/gtr:*`, `/gsd:*` slugs) stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in. Do **not** fall back to English just because this file is written in English — translate as you print.
+
 `$ARGUMENTS` is the lookup target. Three cases:
 
-1. **No arguments** → print the table of contents (section "Table of contents" below).
+1. **No arguments** → print the table of contents (section "Table of contents" below) **plus** the "Topic: workflow" section underneath it. The TOC alone is not enough — the user landing on `/gtr:help` with no arg should see how the pieces fit together before scrolling for command details.
 2. **A command name** (e.g. `setup`, `gtr:setup`, `gsd:plan-phase`) → print the corresponding "Command" entry. Match leniently: bare names map to `/gtr:*` first, then `/gsd:*`.
-3. **A topic** (e.g. `planning`, `release`, `hooks`, `manifest`, `migration`) → print the "Topic" entry.
+3. **A topic** (e.g. `workflow`, `planning`, `release`, `hooks`, `manifest`, `migration`) → print the "Topic" entry.
 
-Print only the requested entry. Do not output project-specific analysis, git status, or next-step suggestions.
+Print only the requested entry (plus the workflow topic for the no-arg case). Do not output project-specific analysis, git status, or next-step suggestions.
 
 ---
 
@@ -18,6 +20,7 @@ Print only the requested entry. Do not output project-specific analysis, git sta
 
 ```
 TOPICS — high-level guides
+  workflow      Big picture: from empty repo to shipped release (start here)
   planning      How GSD works, when to use it, when to skip it
   release       Cutting and shipping a release end-to-end
   hooks         Guard hooks, customisation, exit codes
@@ -64,10 +67,89 @@ GSD COMMANDS — planning and execution
   /gsd:help              GSD's own command reference
 
 Recommended learning path:
-  1. /gtr:help planning      — understand the GSD model first
-  2. /gtr:help onboarding    — if applying to existing project
-  3. /gtr:help release       — when ready to ship
+  1. /gtr:help workflow      — see how the pieces connect end-to-end
+  2. /gtr:help planning      — understand the GSD model in depth
+  3. /gtr:help onboarding    — if applying to existing project
+  4. /gtr:help release       — when ready to ship
 ```
+
+---
+
+## Topic: workflow
+
+The whole template-plus-GSD lifecycle, in order. Read this first if you have just cloned the template and do not know where to start.
+
+### Mental model in one paragraph
+
+The template owns *how the project runs* (hooks, identity, releases, updates, onboarding). GSD owns *what to build next* (vision, roadmap, phase plans, execution). You set up the project once with `/gtr:setup`, then you alternate between **planning a phase** and **executing it**, and once a milestone is done you cut a release with `/gtr:release`.
+
+### 0. First-time setup (once per clone)
+
+- **New project / fresh clone**: run `/gtr:setup`. It asks for conversation language *first*, then detects the stack, fills `CLAUDE.md` and `IDENTITY.yaml`, installs plugins, writes `.claude/.setup-complete`. From this point every later prompt and slash-command output speaks the language you picked.
+- **Existing project (template adopted into a live repo)**: run `/gtr:onboard` first to merge template files non-destructively, then `/gtr:setup`.
+- Stuck on what command to run? `/gtr:menu` is a numbered routing menu.
+
+### 1. Frame the project (once per project, then per milestone)
+
+- Brand-new code: `/gsd:new-project` writes `.planning/PROJECT.md` (vision, constraints, success criteria), then `/gsd:create-roadmap` breaks the vision into phases.
+- Existing code: run `/gsd:map-codebase` *first* — it spawns parallel `Explore` agents to produce `.planning/codebase/*.md` (stack, architecture, conventions) so the brief sees real context, not assumptions.
+- Want to refine before committing to a roadmap? `/gsd:discuss-milestone` interviews you about scope before any artefact is written.
+
+### 2. Plan one phase at a time
+
+Pick the next phase number from `.planning/ROADMAP.md` and run `/gsd:plan-phase <N>`. Output lands at `.planning/phases/<NN>-<name>/<NN>-<P>-PLAN.md`. Helpers, all optional:
+
+- `/gsd:list-phase-assumptions <N>` — show how Claude is interpreting the phase before it commits to a plan. Catch misreadings cheaply.
+- `/gsd:research-phase <N>` — niche research before planning (libraries, APIs, prior art).
+- `/gsd:discuss-phase <N>` — Socratic interview to extract constraints you might not have written down.
+
+Multiple plans per phase are supported (`<NN>-01-PLAN.md`, `<NN>-02-PLAN.md`, ...) — useful when a phase has parallel workstreams.
+
+### 3. Execute the plan
+
+Run `/gsd:execute-plan <path-to-PLAN.md>`. Strategy is auto-selected from the plan's checkpoint markup:
+
+- **No checkpoints** → fully autonomous in a worktree-isolated subagent. Main context stays at ~5%. This is the cheap, default mode.
+- **Verify checkpoints** → segmented; subagent runs autonomous segments, you review at each gate.
+- **Decision checkpoints** → executes in main context for back-and-forth.
+
+Per-task atomic commits land as work proceeds. When the plan finishes, a `SUMMARY.md` is written next to `PLAN.md` and a metadata commit closes the loop.
+
+### 4. Verify and iterate
+
+- `/gsd:verify-work` walks you through manual user-acceptance testing of what just shipped. Issues you record become input for `/gsd:plan-fix`, which produces a follow-up fix plan you execute the same way.
+- Repeat until the phase is closed in `.planning/STATE.md`.
+
+### 5. Resume / pause / interrupt
+
+- Coming back after a break? `/gsd:resume-work` restores context from `.planning/STATE.md` and the most recent SUMMARY. `/gsd:progress` is the lighter version — visual progress bar and "what's next" routing.
+- Need to stop mid-plan? `/gsd:pause-work` writes a `.continue-here` handoff so the next session picks up cleanly.
+- Urgent fix between phases? `/gsd:insert-phase 5 "fix critical auth bug"` makes phase 5.1 without renumbering everything else.
+
+### 6. Cut a release (per milestone)
+
+When the milestone's phases are all closed:
+
+1. `/gtr:doctor` — preflight: CHANGELOG has unreleased entries, `IDENTITY.yaml` and derived manifests agree, plugin pin is fresh.
+2. `/gtr:release <version>` — bumps `IDENTITY.yaml#version`, rotates `CHANGELOG.md` (`[Unreleased]` → `[<version>] - <date>`, fresh `[Unreleased]` on top), commits as `chore(release): v<version>`, tags `v<version>`. Never pushes.
+3. Manually: `git push && git push --tags`.
+4. The `release.yml` workflow drafts a GitHub release. Review the draft, attach screenshots, click Publish.
+
+After the release, `/gsd:complete-milestone` archives the milestone and prepares the next version's roadmap section.
+
+### 7. Keep current
+
+- `/gtr:update` — pulls upstream template changes, runs migrations, reconciles via the sha-keyed manifest. Single update commit, never pushes.
+- `/gtr:doctor` — periodic health check (drift, secret leakage, hook registration).
+
+### Quick decision tree
+
+- "Where do I start?" → `/gtr:setup` if `.claude/.setup-complete` is missing, else `/gsd:progress`.
+- "What do I do next?" → `/gsd:progress` always answers this.
+- "Lost the thread after a long break?" → `/gsd:resume-work`.
+- "Need urgent fix between phases?" → `/gsd:insert-phase`.
+- "Tiny one-off change (5 lines)?" → just edit and commit. GSD is for non-trivial work.
+- "Forgot a command name?" → `/gtr:menu` (interactive) or `/gtr:help <name>` (specific lookup).
 
 ---
 
@@ -95,7 +177,26 @@ ISSUES.md   -> DEFERRED WORK (with triggers)
 - Mid-plan interruption: `/gsd:pause-work` writes a `.continue-here` handoff.
 - Urgent insertion: `/gsd:insert-phase 5 "fix critical auth bug"` makes phase 5.1.
 
-**When to skip GSD:** very small one-off changes (single bug fix, doc tweak). Don't bother creating a plan for a 5-line change.
+**Concrete walkthrough (greenfield):**
+
+1. `/gsd:new-project` — interview about vision, constraints, success criteria. Output: `.planning/PROJECT.md` + `.planning/config.json`. In template-managed projects the brief auto-fills from `IDENTITY.yaml` / `CLAUDE.md` / `README.md` and you only confirm or tweak.
+2. `/gsd:create-roadmap` — turns the vision into ordered phases. Output: `.planning/ROADMAP.md` (e.g. phase 1 = "auth scaffold", phase 2 = "user CRUD", phase 3 = "billing"). Phases are deliberately coarse-grained; planning happens later, per phase.
+3. `/gsd:plan-phase 1` — produces `.planning/phases/01-auth-scaffold/01-01-PLAN.md` with concrete tasks and verification gates. Optionally first run `/gsd:list-phase-assumptions 1` to see how Claude is interpreting the phase.
+4. `/gsd:execute-plan .planning/phases/01-auth-scaffold/01-01-PLAN.md` — runs the plan. Atomic commits per task. When the plan finishes, a `SUMMARY.md` lands next to `PLAN.md`.
+5. `/gsd:verify-work` — manual UAT. Issues found here become `/gsd:plan-fix` input.
+6. Loop: `/gsd:plan-phase 2`, execute, verify, ... until the milestone is closed.
+7. Milestone done? `/gsd:complete-milestone` archives it and prepares the next version.
+
+**Concrete walkthrough (brownfield — existing repo):**
+
+The only difference is step 0 — run `/gsd:map-codebase` first. It produces `.planning/codebase/STACK.md`, `ARCHITECTURE.md`, `STRUCTURE.md`, `CONVENTIONS.md`, `TESTING.md`, `INTEGRATIONS.md`, `CONCERNS.md`. Subsequent `/gsd:new-project` and `/gsd:plan-phase` runs read those files so plans respect the existing structure instead of inventing parallel scaffolding.
+
+**Execution strategies (auto-selected by /gsd:execute-plan):**
+- *No checkpoints* → fully autonomous in a worktree-isolated subagent. Main context ~5%. Cheap, default.
+- *Verify checkpoints* → segmented; each segment runs autonomous, you confirm at each gate.
+- *Decision checkpoints* → runs in main context for back-and-forth Q&A.
+
+**When to skip GSD:** very small one-off changes (single bug fix, doc tweak, rename, comment fix). Don't bother creating a plan for a 5-line change. Planning has overhead — it pays off when the work has multiple steps, takes more than one session, or needs to be resumable.
 
 ---
 
@@ -297,4 +398,4 @@ Run this **before** `/gsd:new-project` on existing repos so the brief sees real 
 
 - For commands not listed above, run `/gsd:help` for GSD's own reference.
 - All template commands are namespaced under `/gtr:*`. All planning commands are under `/gsd:*`. Plugin commands live in plugin-specific namespaces (e.g. `/commit-commands:commit`).
-- The conversation language for the project is set in `CLAUDE.md` `## Communication`. Help output stays English regardless of conversation language.
+- The conversation language for the project is set in `CLAUDE.md` `## Communication`. Help output is rendered in that language; only command names, file paths, and code stay verbatim.

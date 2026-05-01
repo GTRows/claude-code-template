@@ -4,13 +4,43 @@ description: "[TEMPLATE] First-time project setup wizard. Detects stack, fills C
 
 You are the **template setup wizard**. Run this once per project. It is idempotent — safe to re-run to refresh detected values.
 
-`$ARGUMENTS` may include `--extras`. When present, **skip steps 1–11 entirely** and run only step 12 (Optional scaffolding) plus the closing manifest refresh and summary. Use this when the user already finished core setup and wants to add LICENSE / SECURITY.md / ADR / dependabot etc. without re-answering the stack-detection and language questions.
+`$ARGUMENTS` may include `--extras`. When present, **skip steps 1–12 entirely** and run only step 13 (Optional scaffolding) plus the closing manifest refresh and summary. Step 1 (conversation language) still applies — read the existing `## Communication` section in `CLAUDE.md` and continue in that language. Only re-ask the language question if no `## Communication` section exists yet.
 
 Do not narrate each step while running. Execute them, then print the summary in the final step.
 
 ---
 
-## 1. Preflight
+## 1. Conversation language (ask before anything else)
+
+This is the very first action in the wizard, **before the preflight check, before stack detection, before any other question**. Every later prompt, summary, confirmation, and slash-command output the user sees must follow the chosen language.
+
+Ask exactly:
+
+> What language should I speak with you in this project? (English / Türkçe / Deutsch / Français / Español / ... — pick one)
+
+Default suggestion: detect from the language the user wrote `/gtr:setup` in and propose it as the default. If the user typed in Turkish, default to Türkçe; if in English, default to English; etc.
+
+Whatever the user picks, append a binding rule to `CLAUDE.md` under a new `## Communication` section (create the section if it does not exist):
+
+```
+- Speak with the user in <Language>. All conversational responses,
+  prompts, summaries, questions, and slash-command output (including
+  /gtr:help, /gtr:doctor, /gsd:* commands) must be in this language.
+- Code, identifiers, comments, commit messages, and file contents
+  must always be in English regardless of conversation language.
+- Status lines, table headers, and command names stay verbatim
+  (e.g. `/gtr:setup`, `IDENTITY.yaml`) — do not translate them.
+```
+
+This rule overrides any default. Do not switch languages mid-project unless the user re-runs `/gtr:setup`.
+
+**From this point on, every prompt and summary in the rest of this wizard is in the chosen language.** Section headers in this file stay English (they are instructions to Claude, not to the user).
+
+If the wizard is being re-run and `## Communication` already exists, skip this step silently and continue in the already-configured language — but still confirm with one short sentence: "Continuing in <Language>." Then proceed.
+
+---
+
+## 2. Preflight
 
 Check if `.claude/.setup-complete` exists.
 
@@ -19,7 +49,7 @@ Check if `.claude/.setup-complete` exists.
 
 ---
 
-## 2. Detect the stack
+## 3. Detect the stack
 
 Do NOT ask the user what the stack is. Detect it by reading files. Run these in parallel:
 
@@ -40,7 +70,7 @@ Summarize detection in one short paragraph. **Confirm with the user** before pro
 
 ---
 
-## 3. Fill `IDENTITY.yaml` (single source of truth)
+## 4. Fill `IDENTITY.yaml` (single source of truth)
 
 `IDENTITY.yaml` at repo root is the canonical identity and release config. Every other manifest derives from it.
 
@@ -61,7 +91,7 @@ If any derived manifest disagrees with `IDENTITY.yaml#version` after filling, sy
 
 ---
 
-## 4. Fill `CLAUDE.md`
+## 5. Fill `CLAUDE.md`
 
 Replace placeholder blocks using values from `IDENTITY.yaml`:
 
@@ -82,7 +112,7 @@ If `PROJECT_NAME` appears as literal text elsewhere (README, docs), replace it t
 
 ---
 
-## 5. Branch strategy (fork or primary)
+## 6. Branch strategy (fork or primary)
 
 Ask exactly one question:
 
@@ -105,7 +135,7 @@ Append to `CLAUDE.md` under a new `## Branch Strategy` section:
 
 ---
 
-## 6. Commit authorship
+## 7. Commit authorship
 
 Append under `## Git and Commits` in `CLAUDE.md`:
 
@@ -116,27 +146,9 @@ Append under `## Git and Commits` in `CLAUDE.md`:
 
 ---
 
-## 7. Conversation language and project i18n
+## 8. Project localization (i18n)
 
-Two separate questions — ask them together, in one message:
-
-**a. Conversation language**
-
-> What language should I speak with you in this project? (English / Türkçe / Deutsch / ... — pick one)
-
-Whatever the user picks, append a binding rule to `CLAUDE.md` under a new `## Communication` section:
-
-```
-- Speak with the user in <Language>. All conversational responses,
-  prompts, summaries, and questions must be in this language.
-- Code, identifiers, comments, commit messages, and file contents
-  must always be in English regardless of conversation language.
-- Slash command output formatting (tables, status lines) stays English.
-```
-
-This rule overrides any default. Do not switch languages mid-project unless the user re-runs `/gtr:setup`.
-
-**b. Project localization (i18n)**
+Ask:
 
 > Will this project ship to end users in multiple languages? (yes / no / later)
 
@@ -152,9 +164,11 @@ This rule overrides any default. Do not switch languages mid-project unless the 
   ```
   Add `pick-i18n-lib` follow-up to `.claude/setup-followups.md`: "i18n library installed, default + at least one non-default locale rendering".
 
+Note: this is *product* localization (the app's UI), independent of step 1 (which controls the language Claude speaks to the developer).
+
 ---
 
-## 8. Install recommended plugins
+## 9. Install recommended plugins
 
 Tell the user which plugins you will install and why. These are installed globally (user scope) and become available in every project:
 
@@ -169,7 +183,7 @@ Tell the user which plugins you will install and why. These are installed global
 | `oh-my-claudecode` | `omc` | Autopilot, ralph, ultrawork, deep-dive, plan, and more advanced agents |
 | `frontend-design` | `claude-code-plugins` | Only if the project has a UI |
 
-**Step 8a — register custom marketplaces first.** Run `claude plugin marketplace list`; if `omc` is missing, add it:
+**Step 9a — register custom marketplaces first.** Run `claude plugin marketplace list`; if `omc` is missing, add it:
 
 ```bash
 claude plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode
@@ -177,7 +191,7 @@ claude plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode
 
 The other two marketplaces (`claude-plugins-official`, `claude-code-plugins`) ship with Claude Code; you do not need to add them.
 
-**Step 8b — install plugins.** Run `claude plugin list` first. Skip anything already installed. Install the rest:
+**Step 9b — install plugins.** Run `claude plugin list` first. Skip anything already installed. Install the rest:
 
 ```bash
 claude plugin install <name>@<marketplace>
@@ -185,7 +199,7 @@ claude plugin install <name>@<marketplace>
 
 Users running Claude Code with `--dangerously-skip-permissions` get silent installs; otherwise they get one prompt per plugin.
 
-**Step 8c — pin the installed set.** After installs land, write the pin file so `/gtr:doctor` can flag drift later:
+**Step 9c — pin the installed set.** After installs land, write the pin file so `/gtr:doctor` can flag drift later:
 
 ```bash
 python .claude/scripts/plugins.py --pin
@@ -195,7 +209,7 @@ This records `name@marketplace` for every currently installed plugin into `.clau
 
 ---
 
-## 9. Planning hand-off (GSD)
+## 10. Planning hand-off (GSD)
 
 Ask exactly:
 
@@ -204,13 +218,13 @@ Ask exactly:
 > - **no**    → skip planning. Template still works for hooks, releases, onboarding, doctor.
 > - **later** → captured in `.claude/setup-followups.md` (gitignored). `/gtr:doctor` surfaces it.
 
-For every `CLAUDE.md` section you could **not** fill in step 4, capture it in `.claude/setup-followups.md` (one line per gap with the section name). These become natural seeds for the first GSD plan when the user later runs `/gsd:plan-phase 1`.
+For every `CLAUDE.md` section you could **not** fill in step 5, capture it in `.claude/setup-followups.md` (one line per gap with the section name). These become natural seeds for the first GSD plan when the user later runs `/gsd:plan-phase 1`.
 
 Do **NOT** create `TODO.md` or `DEFERRED.md` — both are removed in v0.2.0. Planning lives under `.planning/` (managed by GSD) or not at all.
 
 ---
 
-## 10. CI scaffolding (opt-in)
+## 11. CI scaffolding (opt-in)
 
 Ask:
 
@@ -225,7 +239,7 @@ Ask:
 
 ---
 
-## 11. Release scaffolding (opt-in)
+## 12. Release scaffolding (opt-in)
 
 Ask:
 
@@ -243,7 +257,7 @@ Ask:
 
 ---
 
-## 12. Optional scaffolding (opt-in, batched)
+## 13. Optional scaffolding (opt-in, batched)
 
 Ask the user once, listing every option:
 
@@ -263,7 +277,7 @@ For each picked option:
 - `SECURITY.md` → minimal disclosure policy (email contact, expected response time, supported versions table — fill from `IDENTITY.yaml`).
 - `CONTRIBUTING.md` → derive from this CLAUDE.md's `Git and Commits`, `Code Standards`, `File Organization` sections.
 - `.github/CODEOWNERS` → ask for the user's GitHub handle, default `* @<handle>`.
-- `.github/dependabot.yml` → infer ecosystem from detection in step 2 (npm, pip, cargo, gomod, ...).
+- `.github/dependabot.yml` → infer ecosystem from detection in step 3 (npm, pip, cargo, gomod, ...).
 - `.pre-commit-config.yaml` → infer hooks from stack (ruff for Python, prettier for JS, etc.); leave a comment block of suggested hooks the user can opt into.
 - `.env.example` → only if the project already imports `dotenv` / uses `os.environ.get` patterns. Scan top-level source for variable names and stub them with empty values.
 
@@ -271,22 +285,23 @@ For files the user did not pick, do nothing — do not add follow-ups for them.
 
 ---
 
-## 13. Hooks sanity check
+## 14. Hooks sanity check
 
 - Read `PROTECTED_EXACT` in `.claude/hooks/pre_guard_release_files.py`. If the project has lock or manifest files not yet listed (`Cargo.lock`, `yarn.lock`, `pnpm-lock.yaml`, `Pipfile.lock`, `poetry.lock`, `go.sum`, ...), suggest additions and wait for user confirmation. Do NOT edit the hook without approval.
 - If the project uses Windows-specific native APIs (detected `winreg` / `ctypes` imports, `SystemParametersInfo`), offer to register `.claude/hooks/optional/pre_warn_win32_danger.py` in `.claude/settings.json`.
 
 ---
 
-## 14. Write the setup marker
+## 15. Write the setup marker
 
 Create `.claude/.setup-complete` with exactly this content (no trailing whitespace):
 
 ```
 version: 1
 date: <today's ISO date, YYYY-MM-DD>
-stack: <one-line stack summary from step 2>
+stack: <one-line stack summary from step 3>
 type: <fork|primary>
+language: <conversation language picked in step 1>
 ```
 
 Ensure `.claude/.setup-complete` is listed in `.gitignore` — the marker is per-clone, not per-repo.
@@ -301,10 +316,11 @@ Add `.claude/.template-manifest.json` to git so it ships with the project.
 
 ---
 
-## 15. Summary
+## 16. Summary
 
-Print a short summary:
+Print a short summary (in the chosen conversation language):
 
+- Conversation language locked in (step 1)
 - What you filled in `CLAUDE.md`
 - Follow-ups captured in `.claude/setup-followups.md`
 - Plugins installed
