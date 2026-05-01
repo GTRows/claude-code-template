@@ -30,6 +30,7 @@ TOPICS — high-level guides
   permissions   allow / ask / deny layers in settings.json
 
 GTR COMMANDS — template lifecycle
+  /gtr:next              "What should I do right now?" (state-aware advisor)
   /gtr:menu              Interactive entry point
   /gtr:setup             First-time wizard (also /gtr:setup --extras)
   /gtr:onboard           Merge template into an existing project
@@ -67,6 +68,7 @@ GSD COMMANDS — planning and execution
   /gsd:help              GSD's own command reference
 
 INTENT -> COMMAND (quick map — pick the row that matches what you want to do)
+  "What should I do right now?"                       /gtr:next
   "Set up this project for the first time"            /gtr:setup
   "Read my whole project, summarise structure"        /gsd:map-codebase
   "Define the project's vision and goals"             /gsd:new-project
@@ -318,6 +320,32 @@ Three layers in `.claude/settings.json#permissions`:
 - **allow** — pre-approved, no prompt. Project-wide rules in `settings.json`; per-user allowlists in `settings.local.json` (gitignored).
 
 Defense in depth: pattern matching catches blatant cases cheaply, hooks catch subtle ones (e.g. hardcoded secrets inside otherwise-allowed file types).
+
+---
+
+## Command: /gtr:next
+
+State-aware advisor. Reads the project's state (setup marker, IDENTITY, CLAUDE.md, `.planning/*`, source-file count) and prints the **single next command** to run, with a short reason and the likely follow-ups.
+
+Use this when you do not know what to do — e.g. just cloned the template, or just came back to the project after a break, or finished a plan and are not sure whether to verify, plan the next phase, or cut a release.
+
+Output layout:
+
+```
+RIGHT NOW
+  <command>
+
+WHY
+  <one-line reason from observed state>
+
+AFTER THIS (likely next steps)
+  <next 1-3 commands>
+
+PROJECT STATE
+  <bullet list of what was found>
+```
+
+Does **not** execute the recommended command. Print-and-stop is the default. If you reply with "do it", the advisor dispatches.
 
 ---
 

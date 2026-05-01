@@ -17,6 +17,13 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ### Fixed
 ### Security
 
+## [0.6.3] - 2026-05-01
+
+### Added
+- `/gtr:next` — state-aware advisor. Reads the project's state (setup marker, IDENTITY, CLAUDE.md, .planning/* artefacts, source-file count) and prints the single next command to run, with a one-line reason and the likely follow-ups. Print-and-stop by default; reply "do it" to dispatch. Decision table prioritises earliest-stage gaps: setup -> map-codebase (brownfield) -> new-project -> create-roadmap -> plan-phase -> execute-plan -> verify-work -> plan-fix -> release.
+- `/gtr:menu` exposes "Tell me what to do next" as option 2, routing to `/gtr:next`.
+- `/gtr:help` table-of-contents and INTENT cheat sheet include `/gtr:next` and the row "What should I do right now?".
+
 ## [0.6.2] - 2026-05-01
 
 ### Added

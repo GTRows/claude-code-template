@@ -29,7 +29,8 @@ What do you want to do?
 
   Setup & health
     1. Set up this project                       /gtr:setup
-    2. Health check                              /gtr:doctor
+    2. Tell me what to do next                   /gtr:next
+    3. Health check                              /gtr:doctor
     3. Pull template updates                     /gtr:update
     4. Onboard an existing project               /gtr:onboard
 
