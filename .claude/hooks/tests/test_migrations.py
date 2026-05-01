@@ -163,3 +163,81 @@ def test_runner_apply_bumps_version(tmp_path):
     _make_v0_1_layout(tmp_path)
     runner.run(tmp_path, "0.2.0", dry_run=False, log=lambda _msg: None)
     assert (tmp_path / ".claude" / "VERSION").read_text(encoding="utf-8").strip() == "0.2.0"
+
+
+# ---------- v0.6.4 plan ----------
+
+v064 = _load("migrations.v0_6_4", SCRIPTS / "migrations" / "v0_6_4.py")
+
+
+LEGACY_COMM = (
+    "## Communication\n\n"
+    "- Speak with the user in Turkish (Türkçe). All conversational responses,\n"
+    "  prompts, summaries, and questions must be in Turkish.\n"
+    "- Code, identifiers, comments, commit messages, and file contents\n"
+    "  must always be in English regardless of conversation language.\n"
+    "- Slash command output formatting (tables, status lines) stays English.\n"
+)
+
+NEW_COMM_MARKER = "slash-command output (including"
+LEGACY_TAIL = "Slash command output formatting (tables, status lines) stays English."
+
+
+def _write_claude_md(root: Path, body: str) -> Path:
+    f = root / "CLAUDE.md"
+    f.write_text(body, encoding="utf-8")
+    return f
+
+
+def test_v064_plan_no_op_when_legacy_block_absent(tmp_path):
+    _write_claude_md(tmp_path, "# CLAUDE.md\n\nNo communication section.\n")
+    assert v064.plan(tmp_path) == []
+
+
+def test_v064_plan_no_op_when_already_migrated(tmp_path):
+    _write_claude_md(
+        tmp_path,
+        "# CLAUDE.md\n\n## Communication\n\n"
+        "- Speak with the user in Turkish. All conversational responses,\n"
+        "  prompts, summaries, questions, and slash-command output (including\n"
+        "  /gtr:help, /gtr:doctor, /gsd:* commands) must be in this language.\n",
+    )
+    assert v064.plan(tmp_path) == []
+
+
+def test_v064_plan_detects_legacy_block(tmp_path):
+    _write_claude_md(tmp_path, "# CLAUDE.md\n\n" + LEGACY_COMM + "\n## Next\n")
+    actions = v064.plan(tmp_path)
+    assert len(actions) == 1
+    assert actions[0].kind == "rewrite_communication"
+    assert actions[0].src == "CLAUDE.md"
+
+
+def test_v064_apply_replaces_legacy_block(tmp_path):
+    f = _write_claude_md(tmp_path, "# CLAUDE.md\n\n" + LEGACY_COMM + "\n## Next section\n\nbody.\n")
+    actions = v064.plan(tmp_path)
+    v064.apply(tmp_path, actions)
+    out = f.read_text(encoding="utf-8")
+    assert NEW_COMM_MARKER in out
+    assert LEGACY_TAIL not in out
+    assert "## Next section" in out
+    assert "body." in out
+
+
+def test_v064_apply_is_idempotent(tmp_path):
+    _write_claude_md(tmp_path, "# CLAUDE.md\n\n" + LEGACY_COMM + "\n## Next\n")
+    v064.apply(tmp_path, v064.plan(tmp_path))
+    second_plan = v064.plan(tmp_path)
+    assert second_plan == []
+
+
+def test_v064_unparseable_language_logs_note(tmp_path):
+    body = (
+        "## Communication\n\n"
+        "- Custom rule that does not include the Speak-in line.\n"
+        "- Slash command output formatting (tables, status lines) stays English.\n"
+    )
+    _write_claude_md(tmp_path, body)
+    actions = v064.plan(tmp_path)
+    assert len(actions) == 1
+    assert actions[0].kind == "note"

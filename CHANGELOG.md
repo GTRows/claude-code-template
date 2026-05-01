@@ -17,6 +17,18 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ### Fixed
 ### Security
 
+## [0.6.4] - 2026-05-01
+
+### Added
+- `.claude/scripts/migrations/v0_6_4.py`: rewrites the legacy `## Communication` block in `CLAUDE.md` (the pre-v0.6.0 wording that ended with "Slash command output formatting (tables, status lines) stays English.") with the v0.6.0+ wording. Preserves the language the user originally chose. Idempotent. Skipped if the block was hand-edited beyond the template default; in that case a note is appended to `.claude/migration-log.md`.
+- 6 unit tests for the new migration cover legacy detection, no-op on missing/already-migrated/customised blocks, replacement, idempotency, and note logging.
+
+### Changed
+- `/gtr:help` output-language directive made explicit: in the table-of-contents code block, the right-hand description column **must be translated** when `## Communication` is set to a non-English language. Slash-command names, file paths, version strings, and shell commands stay verbatim. Previously the rule said "code blocks stay verbatim", which was ambiguous and caused some renderings to leave descriptions in English.
+
+### Fixed
+- `/gtr:help` rendering descriptions in English even when conversation language was set to Turkish (or another non-English language). Together with the v0.6.4 migration that updates the project's `## Communication` block, `/gtr:update` now produces help output that is fully in the chosen language on next render.
+
 ## [0.6.3] - 2026-05-01
 
 ### Added
