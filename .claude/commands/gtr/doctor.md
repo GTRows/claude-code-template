@@ -4,6 +4,8 @@ description: "[TEMPLATE] Health check the template state: setup marker, plugins,
 
 Read-only diagnosis of the template's state in this project. Do NOT fix anything without asking. Print results grouped under the headings below.
 
+**Output language.** Read `## Communication` from `CLAUDE.md` and render all explanations, summaries, and recommendations in that language. Section headings, file paths, code blocks, and tool output stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in.
+
 ---
 
 ## 1. Setup marker
@@ -22,7 +24,7 @@ Run the structural checker:
 python .claude/scripts/claude_md_check.py
 ```
 
-It reports missing required sections (e.g. `## Available commands`, `## Planning workflow`, `## Project Overview`) and sections whose body is empty or HTML-comment-only. Surface its output verbatim.
+It reports common sections that are present, missing, or still placeholders. None are strictly required — projects may rename or omit any. Surface its output verbatim and treat missing sections as informational, not as failures.
 
 Then grep for legacy markers too:
 

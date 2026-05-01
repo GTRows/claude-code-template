@@ -4,6 +4,8 @@ description: "[TEMPLATE] Scaffold a new database migration matching the project'
 
 Create a new database migration for: `$ARGUMENTS`
 
+**Output language.** Read `## Communication` from `CLAUDE.md` and conduct the interview and any explanatory output in that language. The migration file content itself stays in English (it is code). File paths, tool names, and command output stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in.
+
 ## 1. Detect the migration tool
 
 Check, in this order, and stop at the first match:

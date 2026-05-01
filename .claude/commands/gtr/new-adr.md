@@ -4,6 +4,8 @@ description: "[TEMPLATE] Scaffold a new Architecture Decision Record under docs/
 
 Create a new ADR (Architecture Decision Record) for: `$ARGUMENTS`
 
+**Output language.** Read `## Communication` from `CLAUDE.md` and conduct the interview and any explanatory output in that language. The ADR file content itself stays in English (it is a code artefact). File paths, command names, and ADR identifiers stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in.
+
 ADRs capture significant technical decisions: why a choice was made, what was considered, what the trade-offs are. They live under `docs/adr/` and are numbered sequentially.
 
 ## Steps

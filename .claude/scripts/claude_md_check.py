@@ -27,21 +27,24 @@ import sys
 from pathlib import Path
 
 
-# Sections every project should have once /gtr:setup has run. Order does not
-# matter; presence does. Marked optional sections do not contribute to drift.
+# Sections that are *commonly* present after /gtr:setup runs. None are strictly
+# required: a project may omit any of them or rename them. The script reports
+# presence informationally; it does not fail on missing sections. Exit code is
+# non-zero only when CLAUDE.md does not exist at all.
 EXPECTED_SECTIONS: list[tuple[str, bool]] = [
-    ("First-time setup check", True),
-    ("Available commands", True),
-    ("Planning workflow", True),
-    ("Project Overview", True),
-    ("Architecture", True),
-    ("Development Commands", True),
-    ("Code Standards", True),
+    ("Project Overview", False),
+    ("Architecture", False),
+    ("Development Commands", False),
+    ("Code Standards", False),
     ("File Organization", False),
     ("Protected Files", False),
-    ("Git and Commits", True),
+    ("Git and Commits", False),
     ("What NOT to Do", False),
     ("Release", False),
+    ("Communication", False),
+    ("First-time setup check", False),
+    ("Available commands", False),
+    ("Planning workflow", False),
 ]
 
 
@@ -127,9 +130,9 @@ def main() -> int:
             if result["extras"]:
                 print(f"  extras (project-specific, not flagged): {len(result['extras'])}")
 
-    # Exit non-zero only on missing required sections.
-    required = {name for name, required in EXPECTED_SECTIONS if required}
-    if any(name in required for name in result["missing"]):
+    # Exit non-zero only when CLAUDE.md is absent. Missing sections are
+    # informational — projects are free to define their own structure.
+    if not result["found"]:
         return 1
     return 0
 

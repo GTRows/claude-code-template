@@ -4,6 +4,8 @@ description: "[TEMPLATE] Scaffold a project-specific Claude Code skill under .cl
 
 Create a new project-specific skill for: `$ARGUMENTS`
 
+**Output language.** Read `## Communication` from `CLAUDE.md` and conduct the interview and any explanatory output in that language. The skill file content itself stays in English (it is loaded into context as instructions). File paths and frontmatter keys stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in.
+
 Project-specific skills live under `.claude/skills/<slug>/`. They differ from plugin-provided skills:
 
 - **Plugins** are installed globally (user scope), shared across all projects. Reach for plugins for general-purpose capabilities (review, planning, scaffolding).

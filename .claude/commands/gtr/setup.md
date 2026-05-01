@@ -42,7 +42,7 @@ If the wizard is being re-run and `## Communication` already exists, skip this s
 
 ## 2. Preflight
 
-Check if `.claude/.setup-complete` exists.
+Check if `.claude/.setup-complete` exists. Use the **Read** tool, not shell commands. (Bash on Windows is Git Bash; PowerShell-style `Test-Path` will fail.) If the Read returns "file does not exist", treat that as Missing — do not retry with another shell.
 
 - **Exists** → tell the user setup was already done (show `date` from the marker). Ask if they want to re-run. If no, stop.
 - **Missing** → continue.

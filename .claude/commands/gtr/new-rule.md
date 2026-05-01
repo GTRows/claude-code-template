@@ -4,6 +4,8 @@ description: "[TEMPLATE] Scaffold a path-scoped CLAUDE.md rule under .claude/rul
 
 Create a new path-scoped rule for: `$ARGUMENTS`
 
+**Output language.** Read `## Communication` from `CLAUDE.md` and conduct the interview and any explanatory output in that language. The rule file content itself stays in English (it is loaded into context as instructions). File paths and frontmatter keys stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in.
+
 Path-scoped rules let you keep `CLAUDE.md` short and load extra rules only when relevant files are being edited. They live under `.claude/rules/<slug>.md` and use frontmatter to declare their scope.
 
 Use a rule when you have guidance that applies to a specific subset of the project (e.g. "tests must use pytest fixtures") instead of cluttering top-level `CLAUDE.md` with rules that are 90% irrelevant to most files.

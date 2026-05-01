@@ -4,6 +4,8 @@ description: "[TEMPLATE] Pull template updates from upstream and merge them with
 
 Pull updates from the upstream template repo (`https://github.com/GTRows/claude-code-template`) into the current project, merge them into existing files when safe, and ask before overwriting anything the user has modified.
 
+**Output language.** Read `## Communication` from `CLAUDE.md` and produce all explanations, conflict prompts, and summaries in that language. File paths, version numbers, and shell commands stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in.
+
 ## Preconditions
 
 1. `.claude/.setup-complete` must exist — refuse if the project has not been set up.

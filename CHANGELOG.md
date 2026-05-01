@@ -17,6 +17,22 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ### Fixed
 ### Security
 
+## [0.6.1] - 2026-05-01
+
+### Added
+- `## Communication` recognised by `claude_md_check.py` as a known section so it does not show up as an unexpected extra.
+
+### Changed
+- Language directive applied to all remaining `/gtr:*` commands (`menu`, `doctor`, `onboard`, `release`, `update`, `new-adr`, `new-migration`, `new-rule`, `new-skill`). Each command now reads `## Communication` from `CLAUDE.md` and produces conversational output in that language; file content, code, and command identifiers stay verbatim. Previously only `/gtr:help` honoured the rule.
+- `claude_md_check.py` is now informational by default. No section is marked required; the script reports presence/missing/placeholder and exits non-zero only when `CLAUDE.md` is absent. Prevents `/gtr:doctor` from failing on projects that use a different CLAUDE.md structure.
+- `/gtr:doctor` section 2 wording updated to reflect that the section list is informational, not a failure gate.
+- `/gtr:setup` step 2 (preflight) now explicitly tells Claude to use the `Read` tool for the `.claude/.setup-complete` existence check. Avoids the assistant generating PowerShell `Test-Path` or other shell-specific syntax that fails under Git Bash on Windows.
+
+### Fixed
+- `/gtr:doctor` falsely flagging projects without the template's exact section names as failing the structural check.
+- `/gtr:menu`, `/gtr:doctor`, `/gtr:onboard`, etc. answering in English even when `## Communication` was set to another language.
+- `/gtr:setup` preflight emitting `if (Test-Path ...) { ... }` PowerShell syntax that errored out under bash.
+
 ## [0.6.0] - 2026-05-01
 
 ### Added

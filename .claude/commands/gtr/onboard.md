@@ -4,6 +4,8 @@ description: "[TEMPLATE] Onboard an existing project — interactive runbook for
 
 You are onboarding the **template into the user's existing project**. This is the interactive driver for `IMPLEMENT.md`. Follow it step by step, asking the user once per decision, applying changes only after they confirm. Do NOT batch-confirm; one step at a time so the user can stop cleanly mid-flow.
 
+**Output language.** Read `## Communication` from `CLAUDE.md` and conduct the interview, confirmations, and summaries in that language. File paths, code blocks, and slash-command names stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in.
+
 ## 0. Preflight
 
 Refuse and stop if any of these hold:

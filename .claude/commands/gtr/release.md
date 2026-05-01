@@ -4,6 +4,8 @@ description: "[TEMPLATE] Prepare a release: bump version, move Unreleased in CHA
 
 You are preparing a release. `$ARGUMENTS` is the target version (e.g. `1.2.3` or `1.2.0-rc.1`).
 
+**Output language.** Read `## Communication` from `CLAUDE.md` and produce all explanations, prompts, and summaries in that language. Version strings, file paths, and shell commands stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in.
+
 If empty, print usage and stop:
 
 ```
