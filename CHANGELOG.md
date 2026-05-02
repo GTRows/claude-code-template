@@ -17,6 +17,11 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ### Fixed
 ### Security
 
+## [0.6.7] - 2026-05-02
+
+### Fixed
+- `/gtr:next` rendering section headers (`RIGHT NOW`, `WHY`, `AFTER THIS`, `PROJECT STATE`) and bullet labels (`Setup complete`, `Conversation language`, `Identity`, `Project vision`, `Roadmap`, `Codebase indexed`, `Active plan`, `Active plan finished`) in English when `## Communication` was set to a non-English language. Layout in `next.md` is now annotated with `<header: ...>` / `<label: ...>` placeholders so it is unambiguously a structural template, not a verbatim string. File paths in parentheses (`IDENTITY.yaml`, `.planning/PROJECT.md`, etc.) still stay verbatim. Sample translations for Turkish included as a reference.
+
 ## [0.6.6] - 2026-05-02
 
 ### Added

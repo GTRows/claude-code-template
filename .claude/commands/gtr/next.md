@@ -6,7 +6,7 @@ You are the **template advisor**. Job: read the project's state, decide the sing
 
 **Output budget.** Follow `.claude/docs/output-style.md`. The full response should fit in ~12 lines: 1 command + 1 reason + 2-3 likely next steps + a 5-bullet state snapshot. No paragraphs.
 
-**Output language.** Read `## Communication` from `CLAUDE.md` and produce all explanations in that language. Slash-command names (`/gtr:setup`, `/gsd:plan-phase`), file paths, and code identifiers stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in.
+**Output language.** Read `## Communication` from `CLAUDE.md` and produce all explanations in that language. Translate the section headers (`RIGHT NOW`, `WHY`, `AFTER THIS`, `PROJECT STATE`) and every bullet label (`Setup complete`, `Conversation language`, `Identity`, `Project vision`, `Roadmap`, `Codebase indexed`, `Active plan`, `Active plan finished`). Keep only these verbatim: slash-command names (`/gtr:setup`, `/gsd:plan-phase`), file paths (`IDENTITY.yaml`, `.planning/PROJECT.md`, `.planning/ROADMAP.md`, `.planning/codebase/`, `CLAUDE.md`), and version strings. If `## Communication` is missing, default to the language the user wrote the request in.
 
 ---
 
@@ -57,29 +57,31 @@ If multiple rules look applicable, pick the lowest-numbered one — the table is
 
 ## 3. Print the answer
 
-Use exactly this layout. Translate prose to the conversation language; keep command names, paths, and section labels verbatim.
+The layout below is a structural template, not a verbatim string. **Translate every header and bullet label** (e.g. `RIGHT NOW`, `WHY`, `AFTER THIS`, `PROJECT STATE`, `Setup complete`, `Conversation language`, `Identity`, `Project vision`, `Roadmap`, `Codebase indexed`, `Active plan`, `Active plan finished`) into the conversation language. Keep slash-command tokens, file paths in parentheses, and version strings verbatim.
 
 ```
-RIGHT NOW
+<header: RIGHT NOW>
   <the single command from the table>
 
-WHY
+<header: WHY>
   <one or two short sentences from the table's reason column,
    adapted to the actual project state you observed>
 
-AFTER THIS (likely next steps)
+<header: AFTER THIS (likely next steps)>
   <next 1-3 commands the user will probably run, in order>
 
-PROJECT STATE
-  - Setup complete:       <yes (date) | no>
-  - Conversation language: <value from ## Communication | not set>
-  - Identity (IDENTITY.yaml): <name (filled) | placeholder>
-  - Project vision (.planning/PROJECT.md): <yes | missing>
-  - Roadmap (.planning/ROADMAP.md): <yes | missing>
-  - Codebase indexed (.planning/codebase/): <yes | no | n/a (greenfield)>
-  - Active plan: <relative path to most recent PLAN.md | none>
-  - Active plan finished: <yes (SUMMARY.md present) | in progress | n/a>
+<header: PROJECT STATE>
+  - <label: Setup complete>:       <yes (date) | no>
+  - <label: Conversation language>: <value from ## Communication | not set>
+  - <label: Identity> (IDENTITY.yaml): <name (filled) | placeholder>
+  - <label: Project vision> (.planning/PROJECT.md): <yes | missing>
+  - <label: Roadmap> (.planning/ROADMAP.md): <yes | missing>
+  - <label: Codebase indexed> (.planning/codebase/): <yes | no | n/a (greenfield)>
+  - <label: Active plan>: <relative path to most recent PLAN.md | none>
+  - <label: Active plan finished>: <yes (SUMMARY.md present) | in progress | n/a>
 ```
+
+For Turkish, that produces headers like `ŞU AN`, `NEDEN`, `BUNDAN SONRA (olası adımlar)`, `PROJE DURUMU`; bullet labels like `Kurulum tamam`, `Konuşma dili`, `Kimlik`, `Proje vizyonu`, `Yol haritası`, `Kod tabanı indekslendi`, `Aktif plan`, `Aktif plan bitti`. Pick natural-sounding equivalents — these examples are illustrative, not mandatory.
 
 Examples of `AFTER THIS`:
 
