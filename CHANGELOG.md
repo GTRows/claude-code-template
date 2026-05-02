@@ -17,6 +17,15 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ### Fixed
 ### Security
 
+## [0.6.5] - 2026-05-02
+
+### Changed
+- `/gtr:help` no-args output is now state-aware. Instead of dumping the full 10-step lifecycle every time, it inspects the project (setup marker, IDENTITY, CLAUDE.md, .planning/* artefacts, source-file count) and prints only the **remaining steps** in order, capped at 5, each with a one-clause why. Steps already completed (setup done, vision written, roadmap drafted, etc.) are skipped. Users who want the full chain can run `/gtr:help workflow`.
+- The static lifecycle list moved from the no-args path to a dedicated reference section, reachable only via `/gtr:help workflow`.
+
+### Fixed
+- `/gtr:help` printing the full "General workflow" (steps 1-10) every time, including steps the user had already finished. The new From-here block keeps the output short and tailored.
+
 ## [0.6.4] - 2026-05-01
 
 ### Added

@@ -19,11 +19,67 @@ If `## Communication` is missing, default to the language the user wrote the req
 
 `$ARGUMENTS` is the lookup target. Three cases:
 
-1. **No arguments** → print the table of contents (section "Table of contents" below) **plus** the "Topic: workflow" section underneath it. The TOC alone is not enough — the user landing on `/gtr:help` with no arg should see how the pieces fit together before scrolling for command details.
+1. **No arguments** → print the table of contents (section "Table of contents" below), then a **state-aware "From here" plan** rendered live from the current project's state (see "How to render From here" below). Do NOT dump the full static workflow — the user has already done some of it. Show only the remaining steps in order.
 2. **A command name** (e.g. `setup`, `gtr:setup`, `gsd:plan-phase`) → print the corresponding "Command" entry. Match leniently: bare names map to `/gtr:*` first, then `/gsd:*`.
-3. **A topic** (e.g. `workflow`, `planning`, `release`, `hooks`, `manifest`, `migration`) → print the "Topic" entry.
+3. **A topic** (e.g. `workflow`, `planning`, `release`, `hooks`, `manifest`, `migration`) → print the "Topic" entry. The full lifecycle (every step, including the ones already done) lives under `Topic: workflow` for users who want the deep version.
 
-Print only the requested entry (plus the workflow topic for the no-arg case). Do not output project-specific analysis, git status, or next-step suggestions.
+Apart from the no-args "From here" block, do not output project-specific analysis, git status, or other freelance suggestions.
+
+---
+
+## How to render "From here" (no-args only)
+
+After the table of contents, inspect the project state with the **Read** tool (not shell — Bash on Windows is Git Bash; PowerShell `Test-Path` will fail). Treat "file does not exist" as a normal signal.
+
+Probe in parallel:
+- `.claude/.setup-complete`
+- `CLAUDE.md` (look for `## Communication`)
+- `IDENTITY.yaml` (is `identity.name` still `PROJECT_NAME`?)
+- `.planning/PROJECT.md`
+- `.planning/ROADMAP.md`
+- `.planning/STATE.md`
+- `.planning/codebase/STACK.md` (was `/gsd:map-codebase` run?)
+- Glob `.planning/phases/*/` (any phase directory?) and `.planning/phases/*/*-PLAN.md` (any plan?). For each plan, check sibling `SUMMARY.md` (plan finished) vs missing (plan in progress).
+
+Also Glob `**/*.{py,ts,tsx,js,jsx,go,rs,java,kt,rb,php}` excluding `.claude/`, `node_modules/`, `dist/`, `build/`. 10+ matches => brownfield.
+
+Build a status set, then emit ONLY the remaining steps in order. Each step is one line: a short verb-led label, the exact slash command, and a one-clause why. Cap the list at 5 items; if more remain, end with "... after that, /gtr:help workflow has the full chain."
+
+Skip-rules (do NOT print a step if its precondition is already satisfied):
+
+| Step | Skip when |
+|------|-----------|
+| Setup                 | `.claude/.setup-complete` exists AND `IDENTITY.yaml#identity.name` is filled (not `PROJECT_NAME`) AND `CLAUDE.md` has `## Communication` |
+| Map existing codebase | greenfield (few/no source files) OR `.planning/codebase/STACK.md` already present |
+| Project vision        | `.planning/PROJECT.md` exists |
+| Roadmap               | `.planning/ROADMAP.md` exists |
+| Plan first phase      | any `.planning/phases/*/*-PLAN.md` exists |
+| Execute current plan  | most recent `PLAN.md` already has sibling `SUMMARY.md` |
+| Verify                | already verified (skip if `.planning/STATE.md` records verify, OR no plan has been executed yet) |
+| Release               | no completed milestone in `.planning/ROADMAP.md` yet |
+
+Format:
+
+```
+From here (3 steps left):
+  1. <Verb-led label>           <command>
+       <one-clause why>
+  2. <Verb-led label>           <command>
+       <one-clause why>
+  3. <Verb-led label>           <command>
+       <one-clause why>
+
+For a single-step recommendation see /gtr:next.
+For the complete lifecycle see /gtr:help workflow.
+```
+
+Translate the labels and "why" lines to the conversation language; keep slash commands and file paths verbatim.
+
+Edge cases:
+- Brand-new project with nothing done yet → show 4-5 steps starting at `/gtr:setup`.
+- Mid-plan (PLAN exists, no SUMMARY) → first step is `/gsd:execute-plan <path>` followed by verify, then plan next phase.
+- Everything done in current milestone → first step is `/gsd:complete-milestone`, then `/gtr:release <version>`.
+- All milestones shipped, nothing pending → print `From here: nothing to do — pick the next milestone with /gsd:new-milestone, or /gtr:doctor for a health check.`
 
 ---
 
@@ -109,9 +165,9 @@ Recommended learning path:
 
 ---
 
-## General workflow (printed alongside the TOC for the no-args case)
+## Reference: full lifecycle (printed only via `/gtr:help workflow`)
 
-Order of operations from empty project to shipped release:
+This is the canonical, state-blind list of every step. The no-args case prints only the **remaining** steps via the "How to render From here" instructions above; this section is the deep reference for users who want to see the whole chain.
 
 1. **Setup** — `/gtr:setup` (asks language first, fills CLAUDE.md and IDENTITY.yaml, installs plugins, writes `.claude/.setup-complete`).
 2. **Read existing code** (only if brownfield) — `/gsd:map-codebase` produces `.planning/codebase/*.md` so later plans see real architecture.
