@@ -6,6 +6,8 @@ You are onboarding the **template into the user's existing project**. This is th
 
 **Output language.** Read `## Communication` from `CLAUDE.md` and conduct the interview, confirmations, and summaries in that language. File paths, code blocks, and slash-command names stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in.
 
+**Output budget.** Follow `.claude/docs/output-style.md`. One decision per turn. No restatement of the previous decision before asking the next.
+
 ## 0. Preflight
 
 Refuse and stop if any of these hold:

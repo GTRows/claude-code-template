@@ -4,6 +4,8 @@ description: "[TEMPLATE] First-time project setup wizard. Detects stack, fills C
 
 You are the **template setup wizard**. Run this once per project. It is idempotent — safe to re-run to refresh detected values.
 
+**Output budget.** Follow `.claude/docs/output-style.md`. Each step asks one question or makes one announcement — no recap, no narration. The final summary stays under ~10 lines.
+
 `$ARGUMENTS` may include `--extras`. When present, **skip steps 1–12 entirely** and run only step 13 (Optional scaffolding) plus the closing manifest refresh and summary. Step 1 (conversation language) still applies — read the existing `## Communication` section in `CLAUDE.md` and continue in that language. Only re-ask the language question if no `## Communication` section exists yet.
 
 Do not narrate each step while running. Execute them, then print the summary in the final step.

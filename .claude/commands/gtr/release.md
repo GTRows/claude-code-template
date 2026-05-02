@@ -6,6 +6,8 @@ You are preparing a release. `$ARGUMENTS` is the target version (e.g. `1.2.3` or
 
 **Output language.** Read `## Communication` from `CLAUDE.md` and produce all explanations, prompts, and summaries in that language. Version strings, file paths, and shell commands stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in.
 
+**Output budget.** Follow `.claude/docs/output-style.md`. The success report stays under 8 lines: version, files touched, commit hash, tag, push hint.
+
 If empty, print usage and stop:
 
 ```

@@ -4,6 +4,8 @@ description: "[TEMPLATE] Health check the template state: setup marker, plugins,
 
 Read-only diagnosis of the template's state in this project. Do NOT fix anything without asking. Print results grouped under the headings below.
 
+**Output budget.** Follow `.claude/docs/output-style.md`. One short line per check. Skip checks that pass with no notes — only surface findings worth acting on. Cap the whole report at ~30 lines unless drift is severe.
+
 **Output language.** Read `## Communication` from `CLAUDE.md` and render all explanations, summaries, and recommendations in that language. Section headings, file paths, code blocks, and tool output stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in.
 
 ---

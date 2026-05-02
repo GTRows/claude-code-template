@@ -6,6 +6,8 @@ Pull updates from the upstream template repo (`https://github.com/GTRows/claude-
 
 **Output language.** Read `## Communication` from `CLAUDE.md` and produce all explanations, conflict prompts, and summaries in that language. File paths, version numbers, and shell commands stay verbatim. If `## Communication` is missing, default to the language the user wrote the request in.
 
+**Output budget.** Follow `.claude/docs/output-style.md`. Show only files that actually changed, conflicts that need a decision, and the final commit hash. Skip "everything is clean" lines.
+
 ## Preconditions
 
 1. `.claude/.setup-complete` must exist — refuse if the project has not been set up.

@@ -17,6 +17,14 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ### Fixed
 ### Security
 
+## [0.6.6] - 2026-05-02
+
+### Added
+- `.claude/docs/output-style.md`: hard length-and-prose budget for every `/gtr:*` command. Spells out: 25-line cap, no preamble, no recap, bullets over paragraphs, anti-examples for slop. Single source of truth so individual command files do not have to repeat the same rule.
+
+### Changed
+- `/gtr:setup`, `/gtr:menu`, `/gtr:doctor`, `/gtr:next`, `/gtr:onboard`, `/gtr:release`, `/gtr:update`, `/gtr:help` now point at `.claude/docs/output-style.md` and add a per-command line cap (8-30 lines depending on the command). Cuts the AI-written verbosity that was making routine commands look like reading a wiki.
+
 ## [0.6.5] - 2026-05-02
 
 ### Changed
