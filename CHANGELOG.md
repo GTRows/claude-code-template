@@ -15,6 +15,7 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ### Deprecated
 ### Removed
 ### Fixed
+- `/gtr:update` reported a stale upstream version when the latest tag was pushed without a published GitHub Release. Step 1 now queries `git ls-remote --tags` first (tags are the source of truth) and only falls back to `gh release list` if the ls-remote call fails. Previously the order was inverted, so a tag-only push made `/gtr:update` report the older published release as "latest".
 ### Security
 
 ## [0.6.8] - 2026-05-03

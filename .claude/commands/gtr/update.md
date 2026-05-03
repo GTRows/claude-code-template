@@ -17,15 +17,17 @@ Pull updates from the upstream template repo (`https://github.com/GTRows/claude-
 
 ## Step 1 — Find the upstream version
 
-```bash
-gh release list --repo GTRows/claude-code-template --limit 1 --json tagName --jq '.[0].tagName'
-```
-
-If `gh` is not available, fall back to:
+Tags are the source of truth — `gh release list` only sees published GitHub Releases and lags behind tags pushed without a release. Always query tags first:
 
 ```bash
 git ls-remote --tags https://github.com/GTRows/claude-code-template.git \
   | awk -F/ '{print $NF}' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1
+```
+
+If the ls-remote call fails (no network, auth issue), fall back to:
+
+```bash
+gh release list --repo GTRows/claude-code-template --limit 1 --json tagName --jq '.[0].tagName'
 ```
 
 Strip the leading `v`. Compare to `.claude/VERSION` content.
