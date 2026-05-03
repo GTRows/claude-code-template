@@ -23,7 +23,6 @@
       "Bash(docker system prune:*)",
       "Bash(npm publish:*)",
       "Bash(pip publish:*)",
-      "Bash(git push:*)",
       "Bash(gh pr merge:*)",
       "Write(.claude/**)",
       "Edit(.claude/**)",

@@ -102,6 +102,7 @@ GTR COMMANDS — template lifecycle
   /gtr:next              "What should I do right now?" (state-aware advisor)
   /gtr:menu              Interactive entry point
   /gtr:setup             First-time wizard (also /gtr:setup --extras)
+  /gtr:set-language      Set or change the conversation language
   /gtr:onboard           Merge template into an existing project
   /gtr:update            Pull upstream changes + run migrations
   /gtr:doctor            Read-only health check (also predictive)
@@ -139,6 +140,7 @@ GSD COMMANDS — planning and execution
 INTENT -> COMMAND (quick map — pick the row that matches what you want to do)
   "What should I do right now?"                       /gtr:next
   "Set up this project for the first time"            /gtr:setup
+  "Change the language Claude speaks to me in"        /gtr:set-language
   "Read my whole project, summarise structure"        /gsd:map-codebase
   "Define the project's vision and goals"             /gsd:new-project
   "Turn the vision into ordered phases (roadmap)"     /gsd:create-roadmap
@@ -429,6 +431,18 @@ First-time project wizard. Detects the stack, fills `CLAUDE.md`, writes `IDENTIT
 **Idempotent.** Re-running refreshes detected values without overwriting your edits.
 
 **Output marker:** `.claude/.setup-complete` (gitignored — per-clone, not per-repo).
+
+---
+
+## Command: /gtr:set-language
+
+Set or change the conversation language for this project. Writes (or updates) the `## Communication` block in `CLAUDE.md` and syncs the `language:` line in `.claude/.setup-complete`.
+
+**Usage:**
+- `/gtr:set-language` — asks which language to use.
+- `/gtr:set-language Turkish` (or `Türkçe`, `tr`) — sets it directly.
+
+Idempotent. Does not retranslate existing prose, plans, or commit history; only the binding rule that future `/gtr:*` and `/gsd:*` commands read.
 
 ---
 

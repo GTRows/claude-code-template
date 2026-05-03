@@ -11,7 +11,12 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ## [Unreleased]
 
 ### Added
+- `/gtr:set-language [lang]`: switch the conversation language without re-running `/gtr:setup`. Writes (or updates) the `## Communication` block in `CLAUDE.md` and syncs the `language:` line in `.claude/.setup-complete`. Accepts English names (`Turkish`), native names (`Türkçe`), or ISO 639-1 codes (`tr`). Listed in `/gtr:help` (TOC, INTENT cheat-sheet, command reference) and added as menu option 3 in `/gtr:menu` with downstream options renumbered.
+
 ### Changed
+- `.claude/settings.json` no longer puts `Bash(git push:*)` on the `ask` list. Force variants (`git push --force`, `git push -f`) remain on `deny`, and per-user `allow` rules in `settings.local.json` now take effect without a per-call prompt.
+- `.claude/VERSION` synced to `0.6.7` to match `IDENTITY.yaml`. The two had drifted (`VERSION` was stuck at `0.5.0`); future migrations need an accurate `VERSION` to detect the gap.
+
 ### Deprecated
 ### Removed
 ### Fixed

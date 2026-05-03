@@ -13,6 +13,7 @@ Before doing any coding work, check for `.claude/.setup-complete`.
 - `/gtr:menu` — interactive entry point. Pick what to do, Claude routes to the right command.
 - `/gtr:help` — list every template command, hook, and file in this repo.
 - `/gtr:setup` — first-time wizard (only needed once per clone).
+- `/gtr:set-language [lang]` — set or change the conversation language (writes `## Communication` in `CLAUDE.md`).
 - `/gtr:onboard` — interactive runbook to merge the template into an existing project.
 - `/gtr:update` — pull template updates from upstream and merge them non-destructively.
 - `/gtr:doctor` — read-only health check (also reports template version drift and manifest drift).

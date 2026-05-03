@@ -32,37 +32,39 @@ What do you want to do?
   Setup & health
     1. Set up this project                       /gtr:setup
     2. Tell me what to do next                   /gtr:next
-    3. Health check                              /gtr:doctor
-    3. Pull template updates                     /gtr:update
-    4. Onboard an existing project               /gtr:onboard
+    3. Change conversation language              /gtr:set-language
+    4. Health check                              /gtr:doctor
+    5. Pull template updates                     /gtr:update
+    6. Onboard an existing project               /gtr:onboard
 
   Planning (powered by GSD)
-    5. Start planning a new project              /gsd:new-project
-    6. Map an existing codebase first            /gsd:map-codebase
-    7. See progress / continue work              /gsd:progress
-    8. Plan the next phase                       /gsd:plan-phase
-    9. Execute current plan                      /gsd:execute-plan
+    7. Start planning a new project              /gsd:new-project
+    8. Map an existing codebase first            /gsd:map-codebase
+    9. See progress / continue work              /gsd:progress
+   10. Plan the next phase                       /gsd:plan-phase
+   11. Execute current plan                      /gsd:execute-plan
 
   Release
-   10. Prepare a release                         /gtr:release
+   12. Prepare a release                         /gtr:release
 
   Reference
-   11. Detailed help                             /gtr:help
-   12. Refresh CLAUDE.md                         /revise-claude-md (plugin)
+   13. Detailed help                             /gtr:help
+   14. Refresh CLAUDE.md                         /revise-claude-md (plugin)
 ```
 
 ## Follow-up questions per option
 
 | Pick | Follow-up question | Dispatched command |
 |------|--------------------|-------------------|
-| 5 (new project planning) | `Workflow mode: interactive (confirm each decision) or yolo (auto-approve)?` | `/gsd:new-project` |
-| 6 (map codebase) | `Existing repo path? (default: current dir)` | `/gsd:map-codebase` |
-| 8 (plan phase) | `Phase number?` | `/gsd:plan-phase <N>` |
-| 9 (execute plan) | If multiple `PLAN.md` exist: `Which plan? (numbered list)`. Otherwise default to next un-executed plan. | `/gsd:execute-plan <path>` |
-| 10 (release) | `Target version? (e.g. 1.2.3 or 1.2.0-rc.1)` | `/gtr:release <version>` |
-| 11 (help) | `Topic? (empty for table of contents, or a command name)` | `/gtr:help [topic]` |
+| 3 (set language) | `Which language? (English / Türkçe / Deutsch / ... — leave empty to be asked)` | `/gtr:set-language [lang]` |
+| 7 (new project planning) | `Workflow mode: interactive (confirm each decision) or yolo (auto-approve)?` | `/gsd:new-project` |
+| 8 (map codebase) | `Existing repo path? (default: current dir)` | `/gsd:map-codebase` |
+| 10 (plan phase) | `Phase number?` | `/gsd:plan-phase <N>` |
+| 11 (execute plan) | If multiple `PLAN.md` exist: `Which plan? (numbered list)`. Otherwise default to next un-executed plan. | `/gsd:execute-plan <path>` |
+| 12 (release) | `Target version? (e.g. 1.2.3 or 1.2.0-rc.1)` | `/gtr:release <version>` |
+| 13 (help) | `Topic? (empty for table of contents, or a command name)` | `/gtr:help [topic]` |
 
-For single-mode picks (1, 2, 3, 4, 7, 12), invoke directly without follow-up.
+For single-mode picks (1, 2, 4, 5, 6, 9, 14), invoke directly without follow-up.
 
 ## First-run hint
 
@@ -71,11 +73,11 @@ If `.claude/.setup-complete` is missing AND `.planning/` is missing, after print
 ```
 First time? Recommended path:
   1 → /gtr:setup           (template scaffolding)
-  5 → /gsd:new-project     (project vision and roadmap)
-  8 → /gsd:plan-phase 1    (concrete plan)
-  9 → /gsd:execute-plan    (build it)
+  7 → /gsd:new-project     (project vision and roadmap)
+ 10 → /gsd:plan-phase 1    (concrete plan)
+ 11 → /gsd:execute-plan    (build it)
 
-Or pick option 11 (help) for a guided walkthrough.
+Or pick option 13 (help) for a guided walkthrough.
 ```
 
 ## Guardrails
