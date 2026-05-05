@@ -12,6 +12,7 @@ and uses it as the GitHub release notes. Do not change the heading format.
 
 ### Added
 ### Changed
+- `/gtr:next` now appends an optional `AUTOPILOT` block when the recommended command is a per-phase GSD step (`/gsd:plan-phase`, `/gsd:execute-plan`, `/gsd:verify-work`, `/gsd:plan-fix`) and a roadmap exists. The block points at `/gtr:orchestrate` with the form best suited to the state (`milestone`, default scope, `resume`, or `forever`). Pre-roadmap and post-milestone states still skip it. Resolves a v0.7.0 gap where `/gtr:next` told the user to run a single GSD command without mentioning the new orchestration entry point.
 ### Deprecated
 ### Removed
 ### Fixed
