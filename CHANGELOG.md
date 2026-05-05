@@ -11,16 +11,19 @@ and uses it as the GitHub release notes. Do not change the heading format.
 ## [Unreleased]
 
 ### Added
-- Multi-agent orchestration: `/gtr:orchestrate [scope]` dispatches three subagents (`planner`, `executor`, `verifier`) defined in `.claude/agents/` to run phases end-to-end without manual `/clear` loops. Default scope is roadmap-wide with milestone-end checkpoints (`release / skip-release / stop`); other forms include single-phase, current-milestone, `all`, `forever` (auto-release), and `resume`. Flags: `--allow-new-phases`, `--max-retries`, `--max-replans`, `--no-verifier`, `--dry-run`, `--auto-release`. Workers communicate via a structured tail-block protocol (`<<orchestrate-result>>{...}<<end>>`) parsed by `.claude/scripts/orchestrate_protocol.py`. Architecture documented at `.claude/docs/orchestration.md` and `/gtr:help orchestration`.
-- `.claude/skills/orchestrate/SKILL.md`: behavior contract for orchestrator sessions (dispatch protocol, retry policy, milestone checkpoints, new-phase detection, resume from `STATE.md` + git log).
-- `.claude/agents/{planner,executor,verifier}.md`: subagent definitions with role-specific tool sets (verifier is read-only).
-- `/gtr:menu` option 12 (Orchestrate end-to-end) and `/gtr:help` TOC entry, INTENT cheat-sheet rows for `forever` / `resume` / `--dry-run`, full Command reference, and Topic deep-dive.
-
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
+
+## [0.7.0] - 2026-05-03
+
+### Added
+- Multi-agent orchestration: `/gtr:orchestrate [scope]` dispatches three subagents (`planner`, `executor`, `verifier`) defined in `.claude/agents/` to run phases end-to-end without manual `/clear` loops. Default scope is roadmap-wide with milestone-end checkpoints (`release / skip-release / stop`); other forms include single-phase, current-milestone, `all`, `forever` (auto-release), and `resume`. Flags: `--allow-new-phases`, `--max-retries`, `--max-replans`, `--no-verifier`, `--dry-run`, `--auto-release`. Workers communicate via a structured tail-block protocol (`<<orchestrate-result>>{...}<<end>>`) parsed by `.claude/scripts/orchestrate_protocol.py`. Architecture documented at `.claude/docs/orchestration.md` and `/gtr:help orchestration`.
+- `.claude/skills/orchestrate/SKILL.md`: behavior contract for orchestrator sessions (dispatch protocol, retry policy, milestone checkpoints, new-phase detection, resume from `STATE.md` + git log).
+- `.claude/agents/{planner,executor,verifier}.md`: subagent definitions with role-specific tool sets (verifier is read-only).
+- `/gtr:menu` option 12 (Orchestrate end-to-end) and `/gtr:help` TOC entry, INTENT cheat-sheet rows for `forever` / `resume` / `--dry-run`, full Command reference, and Topic deep-dive.
 
 ## [0.6.9] - 2026-05-03
 
