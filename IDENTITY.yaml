@@ -29,7 +29,7 @@ identity:
 
 # Semver: MAJOR.MINOR.PATCH. Pre-release tags allowed (e.g. 1.2.0-rc.1).
 # This value is the single source of truth. Derived manifests must match.
-version: 0.7.0
+version: 0.7.1
 
 release:
   # Platforms to build for. Matches matrix entries in .github/workflows/release.yml.

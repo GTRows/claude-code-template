@@ -1,7 +1,7 @@
 {
   "files": {
     ".claude/TIPS.md": "51d87382e2f0e05eec6ce5c1d8b8bb6ee1ee21fea79503023ac63c87039c2e9e",
-    ".claude/VERSION": "966d87547cf763b2acac8723db5c1615c6a41fcc63adfce50a13f106b6311188",
+    ".claude/VERSION": "81a4f39ce803f41d8ad9e492bd67a3feca70257d510ccc86f16e45a5e0b8df51",
     ".claude/commands/gtr/doctor.md": "9fcc50d00c0fb3f5f96e108daee1d35e74115f098b4ed63e74f141873c8623d3",
     ".claude/commands/gtr/help.md": "4fc9a9cdb7488db8d1f380942428aa7ea288a1b2600daebb64190dcce044d9c1",
     ".claude/commands/gtr/menu.md": "30b29360a8ff692aea7194468ef3aca7e4b7fafab4c6db9bf0294163ab67ecef",
@@ -56,5 +56,5 @@
     "IMPLEMENT.md": "3bc658ae7dee8b928280d14fa2e1c1afc4bbe22dfab053412b0e4546e65ed3f1",
     "RELEASE.md": "ec9d1dece9e08205406b7edda5be04f5b048ed53286c8cafdc251ede3620c4c9"
   },
-  "version": "0.7.0"
+  "version": "0.7.1"
 }
