@@ -17,7 +17,7 @@ You are the **template menu**. Job: ask the user what they want, route to the ri
    - `.planning/STATE.md` exists?
 2. **Adapt the menu:**
    - If `.claude/.setup-complete` is missing → option 1 stays primary, gray out everything else with `(run /gtr:setup first)` annotation.
-   - If `.planning/` is missing → planning options 5-9 invite "start a new plan" rather than "continue".
+   - If `.planning/` is missing → planning options 7-12 invite "start a new plan" rather than "continue".
    - If no identity file exists → hide release options.
 3. **Print the menu** (template below).
 4. **Ask the user to pick by number or short keyword.**
@@ -43,13 +43,14 @@ What do you want to do?
     9. See progress / continue work              /gsd:progress
    10. Plan the next phase                       /gsd:plan-phase
    11. Execute current plan                      /gsd:execute-plan
+   12. Orchestrate end-to-end (no /clear loops)  /gtr:orchestrate
 
   Release
-   12. Prepare a release                         /gtr:release
+   13. Prepare a release                         /gtr:release
 
   Reference
-   13. Detailed help                             /gtr:help
-   14. Refresh CLAUDE.md                         /revise-claude-md (plugin)
+   14. Detailed help                             /gtr:help
+   15. Refresh CLAUDE.md                         /revise-claude-md (plugin)
 ```
 
 ## Follow-up questions per option
@@ -61,10 +62,11 @@ What do you want to do?
 | 8 (map codebase) | `Existing repo path? (default: current dir)` | `/gsd:map-codebase` |
 | 10 (plan phase) | `Phase number?` | `/gsd:plan-phase <N>` |
 | 11 (execute plan) | If multiple `PLAN.md` exist: `Which plan? (numbered list)`. Otherwise default to next un-executed plan. | `/gsd:execute-plan <path>` |
-| 12 (release) | `Target version? (e.g. 1.2.3 or 1.2.0-rc.1)` | `/gtr:release <version>` |
-| 13 (help) | `Topic? (empty for table of contents, or a command name)` | `/gtr:help [topic]` |
+| 12 (orchestrate) | `Scope? (empty=roadmap-wide / <phase-id> / milestone / forever / resume)` | `/gtr:orchestrate [scope]` |
+| 13 (release) | `Target version? (e.g. 1.2.3 or 1.2.0-rc.1)` | `/gtr:release <version>` |
+| 14 (help) | `Topic? (empty for table of contents, or a command name)` | `/gtr:help [topic]` |
 
-For single-mode picks (1, 2, 4, 5, 6, 9, 14), invoke directly without follow-up.
+For single-mode picks (1, 2, 4, 5, 6, 9, 15), invoke directly without follow-up.
 
 ## First-run hint
 
@@ -77,7 +79,10 @@ First time? Recommended path:
  10 → /gsd:plan-phase 1    (concrete plan)
  11 → /gsd:execute-plan    (build it)
 
-Or pick option 13 (help) for a guided walkthrough.
+Once you have a roadmap, option 12 (/gtr:orchestrate) runs every phase
+end-to-end without manual /clear loops.
+
+Or pick option 14 (help) for a guided walkthrough.
 ```
 
 ## Guardrails

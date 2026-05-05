@@ -91,6 +91,7 @@ Edge cases:
 TOPICS — high-level guides
   workflow      Big picture: from empty repo to shipped release (start here)
   planning      How GSD works, when to use it, when to skip it
+  orchestration Multi-agent runner: dispatch planner/executor/verifier without /clear loops
   release       Cutting and shipping a release end-to-end
   hooks         Guard hooks, customisation, exit codes
   manifest      Template manifest and what /gtr:update uses it for
@@ -106,6 +107,7 @@ GTR COMMANDS — template lifecycle
   /gtr:onboard           Merge template into an existing project
   /gtr:update            Pull upstream changes + run migrations
   /gtr:doctor            Read-only health check (also predictive)
+  /gtr:orchestrate       Multi-agent runner: planner+executor+verifier dispatch
   /gtr:release           Bump, rotate CHANGELOG, commit, tag
   /gtr:new-migration     Scaffold a DB migration
   /gtr:new-adr           Scaffold an Architecture Decision Record under docs/adr/
@@ -147,6 +149,10 @@ INTENT -> COMMAND (quick map — pick the row that matches what you want to do)
   "Walk the roadmap, pick the next phase, plan it"    /gsd:progress  ->  /gsd:plan-phase <N>
   "Break one phase into 5+ atomic tasks"              /gsd:plan-phase <N>
   "Run the whole plan, do every task in order"        /gsd:execute-plan <path-to-PLAN.md>
+  "Run every phase end-to-end without /clear loops"   /gtr:orchestrate
+  "Run all phases until release time, auto-loop"      /gtr:orchestrate forever
+  "Resume orchestration after a crash"                /gtr:orchestrate resume
+  "Preview the orchestrator queue without running"    /gtr:orchestrate --dry-run
   "Where am I right now? What is next?"               /gsd:progress
   "Resume after a break"                              /gsd:resume-work
   "Stop mid-plan and save context"                    /gsd:pause-work
@@ -310,6 +316,42 @@ The only difference is step 0 — run `/gsd:map-codebase` first. It produces `.p
 - *Decision checkpoints* → runs in main context for back-and-forth Q&A.
 
 **When to skip GSD:** very small one-off changes (single bug fix, doc tweak, rename, comment fix). Don't bother creating a plan for a 5-line change. Planning has overhead — it pays off when the work has multiple steps, takes more than one session, or needs to be resumable.
+
+---
+
+## Topic: orchestration
+
+`/gtr:orchestrate` removes the manual `/clear -> /gtr:next -> /gsd:plan-phase -> /clear -> /gtr:next -> /gsd:execute-plan -> ...` loop. The architecture is documented in full at `.claude/docs/orchestration.md`; this is the short version.
+
+**Three subagents:**
+
+| Worker     | What it does                                                                              | Tools         |
+|------------|-------------------------------------------------------------------------------------------|---------------|
+| `planner`  | Calls `/gsd:plan-phase`, writes one `PLAN.md`, exits.                                     | Read/Write/Glob/Grep/Bash |
+| `executor` | Calls `/gsd:execute-plan`, runs every task with atomic commits per GSD protocol, exits.   | full set      |
+| `verifier` | Reads the plan and the diff up to the executor's `sha`, runs tests, returns pass/fail.    | read-only     |
+
+Each worker spawn is one `Task` tool call with `subagent_type: planner | executor | verifier`. Worker runs in a fresh context; orchestrator only sees the parsed tail-block when the worker exits.
+
+**Tail-block protocol (workers' final line):**
+
+```
+<<orchestrate-result>>{"status":"ok","path":"...","sha":"...","verdict":"pass"}<<end>>
+```
+
+`status` is always present — `ok` (worker succeeded at its job), `fail` (worker hit retry budget), `blocked` (worker can't proceed without orchestrator decision). Other fields are role-specific. The orchestrator parses via `python .claude/scripts/orchestrate_protocol.py parse`.
+
+**Default scope and checkpoints.** `/gtr:orchestrate` (no args) walks every phase across the whole roadmap. At the end of each milestone it stops and asks `release / skip-release / stop` so you stay in control of release decisions. `/gtr:orchestrate forever` skips the prompt and auto-releases each milestone.
+
+**Retry policy:** executor fail → respawn with feedback (default 3); after 3 executor fails on the same plan → respawn planner to revise (default 2 replans); after 2 replans → halt and ask. Verifier `verdict: fail` routes back to executor as if it were a fail.
+
+**New-phase detection:** by default, when a worker reports a missing prereq, the orchestrator pauses and asks before inserting a phase. With `--allow-new-phases` it inserts via `/gsd:insert-phase` automatically and verifier runs in strict mode for the inserted phase.
+
+**Resume.** `/gtr:orchestrate resume` reconstructs state from `.planning/STATE.md` + git log + `SUMMARY.md` files. State JSON persistence is intentionally not in v0.7.0; reconstruction is enough to get back on track.
+
+**Token budget.** Orchestrator main window grows ~10k per phase. Workers eat their own context, then close. No `/clear` needed.
+
+**When NOT to use:** very small one-off changes, single ad-hoc tasks, exploratory sessions where you want to see and edit live. Orchestration is for "I want this milestone built without me babysitting".
 
 ---
 
@@ -485,6 +527,40 @@ See **Topic: migration** for the run order, and **Topic: manifest** for what the
 Interactive runbook to merge the template into an existing project. Per-file confirmation. Skips `README.md`, `package.json`, and other consumer-owned files. Hands off to `/gtr:setup` afterwards.
 
 See **Topic: onboarding**.
+
+---
+
+## Command: /gtr:orchestrate
+
+Run phases end-to-end via three subagents (`planner`, `executor`, `verifier`) so you stop having to `/clear` between every step. The orchestrator (your main session) only dispatches and parses tail-block JSON — it never writes code itself. Workers run in fresh, disposable contexts and close when done. See `.claude/docs/orchestration.md` for the full architecture.
+
+**Argument forms:**
+
+| Form                          | Scope                                                            |
+|-------------------------------|------------------------------------------------------------------|
+| `/gtr:orchestrate`            | Default. Roadmap-wide; stop at each milestone end and ask `release / skip-release / stop`. |
+| `/gtr:orchestrate <phase-id>` | One phase only (e.g. `17`, `17-02`).                             |
+| `/gtr:orchestrate milestone`  | Current milestone only.                                          |
+| `/gtr:orchestrate all`        | Same as default (explicit form).                                 |
+| `/gtr:orchestrate forever`    | Roadmap-wide AND auto-release at every milestone, until `PROJECT.md#success_criteria` are all met. Implies `--allow-new-phases`. |
+| `/gtr:orchestrate resume`     | Re-enter from the last cursor (reconstructed from `STATE.md` + git log). |
+
+**Flags:**
+
+| Flag                    | Effect                                                                        |
+|-------------------------|-------------------------------------------------------------------------------|
+| `--allow-new-phases`    | Auto-insert phases when a gap is detected. Default: ask first.                |
+| `--max-retries <N>`     | Per-plan executor retry budget. Default: 3.                                   |
+| `--max-replans <N>`     | Per-phase planner respawn budget. Default: 2.                                 |
+| `--no-verifier`         | Skip the verifier step. Faster but loses the independent check. Not recommended. |
+| `--dry-run`             | Print the spawn queue and exit without spawning anything.                     |
+| `--auto-release`        | Skip the milestone checkpoint prompt; release automatically. Implied by `forever`. |
+
+**Stops automatically when:** retry budget exhausted, executor would add a new external dep, > 500 line single commit, verifier loop detected (same `fail` reasons twice), token budget exhausted (then resume with `/gtr:orchestrate resume`), user `Ctrl+C`.
+
+**Preflight:** requires `.claude/.setup-complete`, `.planning/PROJECT.md`, `.planning/ROADMAP.md`, clean working tree (except in `resume`), and the GSD plugin installed.
+
+See **Topic: orchestration** for the architecture, retry policy, and protocol details.
 
 ---
 

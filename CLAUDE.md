@@ -17,6 +17,7 @@ Before doing any coding work, check for `.claude/.setup-complete`.
 - `/gtr:onboard` — interactive runbook to merge the template into an existing project.
 - `/gtr:update` — pull template updates from upstream and merge them non-destructively.
 - `/gtr:doctor` — read-only health check (also reports template version drift and manifest drift).
+- `/gtr:orchestrate [scope]` — run phases end-to-end via planner/executor/verifier subagents. Default scope: roadmap-wide with milestone-end checkpoints. See `.claude/docs/orchestration.md`.
 - `/gtr:release <version>` — prepare a release (bump, rotate CHANGELOG, commit, tag). Never pushes.
 - Plugin commands: `/commit`, `/commit-push-pr`, `/review-pr`, `/revise-claude-md`, `/create-skill`.
 
